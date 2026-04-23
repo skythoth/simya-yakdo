@@ -10,7 +10,7 @@ function MapView({ pharmacies, onMarkerClick }) {
     <div style={styles.container}>
       <div style={styles.placeholder}>
         <p>지도 영역</p>
-        <p style={{ fontSize: 12, color: '#999' }}>
+        <p style={{ fontSize: 12, color: "#999" }}>
           카카오맵이 여기에 표시됩니다 (약국 {pharmacies.length}개)
         </p>
       </div>
@@ -20,18 +20,18 @@ function MapView({ pharmacies, onMarkerClick }) {
 
 const styles = {
   container: {
-    width: '100%',
+    width: "100%",
     height: 300,
   },
   placeholder: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#e8e8e8',
-    border: '1px solid #ccc',
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#e8e8e8",
+    border: "1px solid #ccc",
   },
 };
 

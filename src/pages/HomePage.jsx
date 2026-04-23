@@ -1,9 +1,9 @@
 // 메인 페이지 - 지도 + 약국 리스트 조합
-import { useState } from 'react';
-import MapView from '../components/map/MapView';
-import PharmacyList from '../components/pharmacy/PharmacyList';
-import PharmacyDetailModal from '../components/pharmacy/PharmacyDetailModal';
-import { mockPharmacies } from '../mocks/pharmacies';
+import { useState } from "react";
+import Map from "../components/map/Map";
+import PharmacyList from "../components/pharmacy/PharmacyList";
+// import PharmacyDetailModal from "../components/pharmacy/PharmacyDetailModal";
+import { mockPharmacies } from "../mocks/pharmacies";
 
 function HomePage() {
   // TODO: usePharmacyStore에서 상태 가져오기
@@ -18,24 +18,23 @@ function HomePage() {
   };
 
   return (
-    <div className="home-page">
-      <section className="map-section">
-        <MapView pharmacies={mockPharmacies} onMarkerClick={handleSelectPharmacy} />
+    <div className="home-page relative w-full h-full">
+      <section className="map-section absolute inset-0 z-0 items-center justify-center">
+        {/* MapView --> Map으로 변경 (임시) */}
+        <Map pharmacies={mockPharmacies} onMarkerClick={handleSelectPharmacy} />
       </section>
 
-      <section className="list-section">
-        <PharmacyList
-          pharmacies={mockPharmacies}
-          onSelect={handleSelectPharmacy}
-        />
-      </section>
+      <PharmacyList
+        pharmacies={mockPharmacies}
+        onSelect={handleSelectPharmacy}
+      />
 
-      {selectedPharmacy && (
+      {/* {selectedPharmacy && (
         <PharmacyDetailModal
           pharmacy={selectedPharmacy}
           onClose={handleCloseModal}
         />
-      )}
+      )} */}
     </div>
   );
 }
