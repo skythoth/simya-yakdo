@@ -1,12 +1,18 @@
 import React from "react";
 import {useEffect, useState} from "react";
-import { Map as KakaoMap, MapMarker } from "react-kakao-maps-sdk";
+import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
 
 const Map = ({ pharmacies = [], onMarkerClick }) => {
   useKakaoLoader()
-  const { location, isLoading, requestLocation } = useCurrentLocation();
+  const { location, isLoading } = useCurrentLocation();
+  const [positions, setPositions] = useState([]);
+
+  useEffect(() => {
+    setPositions(pharmacies);
+  },[pharmacies])
+
   if (isLoading) {
     return <div>위치를 가져오는 중...</div>;
   }
@@ -29,14 +35,19 @@ const Map = ({ pharmacies = [], onMarkerClick }) => {
           style={{ width: "100%", height: "100%" }}
           level={3} // 지도의 확대 레벨
         >
-          {pharmacies.map((pharmacy) => (
-            <MapMarker 
-              key={pharmacy.id}
-              position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
-              title={pharmacy.name}
-              onClick={() => onMarkerClick(pharmacy)}
-            />
-          ))}
+          <MarkerClusterer
+            averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel={6} // 클러스터 할 최소 지도 레벨
+          >
+            {pharmacies.map((pharmacy) => (
+              <MapMarker 
+                key={pharmacy.id}
+                position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
+                //title={pharmacy.name}
+                onClick={() => onMarkerClick(pharmacy)}
+              />
+            ))}
+          </MarkerClusterer>
         </KakaoMap>
       </div>
     </div>
