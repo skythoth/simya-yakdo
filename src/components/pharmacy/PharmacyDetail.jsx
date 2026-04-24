@@ -33,25 +33,29 @@ function PharmacyDetail({ pharmacy, onClose }) {
       </div>
 
       {/* 운영시간 리스트 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto px-4 py-6">
         <ul className="space-y-3">
           {operatingHours.map((item, index) => (
-            <li key={index} className="flex justify-between text-[14px]">
-              <span className="text-gray-600 font-medium">{item.day}</span>
-              <span className="text-gray-900 font-semibold">{item.time}</span>
+            <li key={index} className="flex justify-between ">
+              <span className="text-gray-600 font-medium text-[14px]">
+                {item.day}
+              </span>
+              <span className="text-gray-900 font-semibold text-[12px]">
+                {item.time}
+              </span>
             </li>
           ))}
         </ul>
       </div>
       {/* 안내내용 */}
-      <p className="text-[12px] text-gray-400 m-4 text-center">
+      <p className="text-[12px] text-gray-400 m-2 text-center">
         정보가 실제와 다를 수 있으니 전화 후 방문해 주세요.
       </p>
       {/* 카카오맵 버튼 */}
-      <div className="p-4 bg-white">
+      <div className="px-5 py-3 bg-white">
         <button
           onClick={handleDirections}
-          className="w-full  shadow-sm bg-[#FAE100] hover:bg-[#F7E600] text-[#3c1e1e] font-bold py-3.5 rounded-xl"
+          className="w-full  shadow-sm bg-[#FAE100] hover:bg-[#F7E600] text-[#3c1e1e]  font-bold py-2.5 rounded-lg text-sm"
         >
           카카오맵 길찾기
         </button>

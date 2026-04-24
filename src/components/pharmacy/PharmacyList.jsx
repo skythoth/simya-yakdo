@@ -3,10 +3,29 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import PharmacyListCard from "./PharmacyListCard";
 import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
+// import { useGetPharmacyQuery } from "../../hooks/useGetPharmacy";
+import LoadingSpinner from "../common/LoadingSpinner";
+
+const DAY_KOR = {
+  monday: "월요일",
+  tuesday: "화요일",
+  wednesday: "수요일",
+  thursday: "목요일",
+  friday: "금요일",
+  saturday: "토요일",
+  sunday: "일요일",
+  holiday: "공휴일",
+};
 
 const PharmacyList = ({ pharmacies = [], onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openId, setOpenId] = useState(null);
+  // const {
+  //   data: pharmacies = [],
+  //   isLoading,
+  //   isError,
+  //   error,
+  // } = useGetPharmacyQuery(37.5666, 126.9784);
 
   const handleCardClick = (pharmacy) => {
     setOpenId(openId === pharmacy.id ? null : pharmacy.id);
@@ -19,6 +38,7 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
   const toggleBtn = `absolute top-1/2 z-30 flex h-16 w-8 -translate-y-1/2 items-center justify-center bg-white border border-l-0 border-gray-300 shadow-md transition-all duration-300 pointer-events-auto
           ${isOpen ? "left-[100%] md:left-[360px]" : "left-0"}`;
 
+  // if (isLoading) return <LoadingSpinner />;
   return (
     <div className="absolute left-0 top-0 h-full z-50 pointer-events-none">
       {/*  1. 사이드바  */}
