@@ -6,9 +6,17 @@
  * @returns 거리 (미터 단위)
  */
 export function calculateDistance(lat1, lng1, lat2, lng2) {
-  // TODO: Haversine 공식 구현
-  console.log('calculateDistance - 미구현');
-  return null;
+  const R = 6371e3; // 지구 반지름 (미터)
+  const toRad = (deg) => (deg * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return Math.round(R * c); // 미터 단위
 }
 
 /**
