@@ -5,7 +5,7 @@ import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
 // import { useGetPharmacyQuery } from "../../hooks/useGetPharmacy";
 import LoadingSpinner from "../common/LoadingSpinner";
-import PharmacyToggle from "../Pharmacy/PharmacyToggle";
+import PharmacyToggle from "./PharmacyToggle";
 
 const DAY_KOR = {
   monday: "월요일",
