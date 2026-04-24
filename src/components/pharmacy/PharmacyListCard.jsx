@@ -10,7 +10,7 @@ function PharmacyListCard({ pharmacy, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="p-3 mb-2 bg-white border border-gray-100 rounded-lg hover:shadow-sm transition-all cursor-pointer flex flex-col gap-1.5"
+      className="p-3 mb-2 bg-white border border-gray-100 rounded-lg hover:shadow-sm active:bg-gray-100/50 transition-all cursor-pointer flex flex-col gap-1.5"
     >
       {/* 1. 약국이름 & 하트버튼  */}
       <div className="flex justify-between items-center">

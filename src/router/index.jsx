@@ -11,8 +11,9 @@ function AppRouter() {
       <Route path="/" element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="pharmacy/:id" element={<HomePage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
       </Route>
-      <Route path="/favorites" element={<FavoritesPage />} />
+
       {/* TODO: 추후 확장용 라우트 (예: /emergency) */}
 
       <Route path="*" element={<NotFoundPage />}></Route>
