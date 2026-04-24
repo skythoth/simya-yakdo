@@ -1,28 +1,26 @@
 import React from "react";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Map as KakaoMap, MapMarker } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
+import Loading from "../common/Loading";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const Map = ({ pharmacies = [], onMarkerClick }) => {
-  useKakaoLoader()
+  useKakaoLoader();
   const { location, isLoading, requestLocation } = useCurrentLocation();
   if (isLoading) {
-    return <div>위치를 가져오는 중...</div>;
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
     <div className="relative w-full h-full bg-gray-100 flex flex-col items-center justify-center">
       {/* 카카오맵 */}
       <div id="map" className="absolute inset-0 w-full h-full">
-        {/* 지도가 로드될 때 */}
-        {/* <div className="flex flex-col items-center justify-center h-full text-gray-400">
-          <p className="font-medium">지도 데이터를 불러오는 중입니다...</p>
-          <p className="text-xs mt-2">
-            현재 표시될 약국: {pharmacies.length}개
-          </p>
-        </div> */}
-
         <KakaoMap // 지도를 표시할 Container
           id="maps"
           center={{ lat: location.lat, lng: location.lng }}
@@ -30,7 +28,7 @@ const Map = ({ pharmacies = [], onMarkerClick }) => {
           level={3} // 지도의 확대 레벨
         >
           {pharmacies.map((pharmacy) => (
-            <MapMarker 
+            <MapMarker
               key={pharmacy.id}
               position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
               title={pharmacy.name}
