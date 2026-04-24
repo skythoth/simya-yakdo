@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
-import PharmacyListCard from "./PharmacyListCard";
-import PharmacyDetail from "./PharmacyDetail";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+// import PharmacyListCard from "./PharmacyListCard";
+// import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
 // import { useGetPharmacyQuery } from "../../hooks/useGetPharmacy";
 import LoadingSpinner from "../common/LoadingSpinner";
-import PharmacyToggle from "../Pharmacy/PharmacyToggle";
+
+//기존 PharmacyList파일 (모바일 수정 전)
 
 const DAY_KOR = {
   monday: "월요일",
@@ -34,30 +35,22 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
   };
 
   // style components
-  const sideBar = `w-full md:w-[360px] 
-  h-[60dvh] md:h-full z-50 bg-white 
-  absolute bottom-0 left-0 md:top-0 
-  shadow-2xl transition-transform duration-300 ease-in-out pointer-events-auto 
+  const sideBar = `w-full md:w-[360px] h-full z-50 bg-white shadow-2xl transition-transform duration-300 ease-in-out pointer-events-auto
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
+  const toggleBtn = `absolute top-1/2 z-30 flex h-16 w-8 -translate-y-1/2 items-center justify-center bg-white border border-l-0 border-gray-300 shadow-md transition-all duration-300 pointer-events-auto
+          ${isOpen ? "left-[100%] md:left-[360px]" : "left-0"}`;
 
   // if (isLoading) return <LoadingSpinner />;
   return (
-    <div className="absolute left-0 top-0 w-full h-full overflow-hidden z-50 pointer-events-none">
+    <div className="absolute left-0 top-0 h-full z-50 pointer-events-none">
       {/*  1. 사이드바  */}
+
       <section className={sideBar}>
-        <div className="h-full flex flex-col relative overflow-hidden">
-          <div className="relative z-30 p-4 border-b bg-white shrink-0 flex justify-between items-center">
+        <div className="h-full flex flex-col">
+          <div className="p-5 border-b bg-white">
             <h2 className="text-xl font-bold">약국 목록</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-full"
-            >
-              <X size={24} className="text-gray-600" />
-            </button>
           </div>
-          <div className="mb-2"></div>
-          {/* 약국리스트 보이기 */}
-          <div className="flex-1 relative  z-10 overflow-y-auto space-y-2 custom-scrollbar p-3">
+          <div className="flex-1 overflow-y-auto p-2 space-y-2">
             {!pharmacies || pharmacies.length === 0 ? (
               <EmptyState message="주변 약국 정보가 없습니다." />
             ) : (
@@ -69,7 +62,7 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
                   />
                   <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out rounded-b-lg
-                               ${openId === pharmacy.id ? "max-h-[1000px] opacity-100 p-2 " : "max-h-0 opacity-0"}`}
+                               ${openId === pharmacy.id ? "max-h-[800px] opacity-100 p-2 " : "max-h-0 opacity-0"}`}
                   >
                     <PharmacyDetail
                       pharmacy={pharmacy}
@@ -84,16 +77,17 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
       </section>
 
       {/*  2. 토글버튼  */}
-      <div
-        className={`transition-all duration-100 
-          ${
-            isOpen
-              ? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
-              : "opacity-100 pointer-events-auto delay-300 md:delay-0"
-          }`}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={toggleBtn}
+        style={{ borderRadius: "0 40px 40px 0" }}
       >
-        <PharmacyToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-      </div>
+        {isOpen ? (
+          <ChevronLeft className="text-gray-600 size={20}" />
+        ) : (
+          <ChevronRight className="text-gray-600 size={20}" />
+        )}
+      </button>
     </div>
   );
 };
