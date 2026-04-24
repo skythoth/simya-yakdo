@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       proxy: {
+        //행안부 약국 데이터
         "/api/safetydata": {
           target: "https://www.safetydata.go.kr",
           changeOrigin: true,
@@ -23,6 +24,24 @@ export default defineConfig(({ mode }) => {
               url.searchParams.set("serviceKey", serviceKey);
             }
 
+            return `${url.pathname}${url.search}`;
+          },
+        },
+        //심평원 약국 데이터
+        "/api/pharmacy": {                                                                                         
+          target: "https://apis.data.go.kr",                                      
+          changeOrigin: true,                                                                                      
+          rewrite: (path) => {                                                                                     
+            const rewrittenPath = path.replace(
+              "/api/pharmacy",
+              "/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire",
+            );
+            const url = new URL(`http://localhost${rewrittenPath}`);
+  
+            if (serviceKey) {
+              url.searchParams.set("serviceKey", serviceKey);
+            }
+  
             return `${url.pathname}${url.search}`;
           },
         },

@@ -7,14 +7,35 @@ const DEFAULT_LOCATION = {
   lng: 126.978,
 };
 
+
 function useCurrentLocation() {
   const [location, setLocation] = useState(DEFAULT_LOCATION);
+  const [region, setRegion] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     requestLocation();
   }, []);
+
+  // 좌표 → 시/도 변환
+  const getRegionFromCoords = (lat, lng) => {
+    if (!window.kakao?.maps?.services) {    //카카오맵 로딩 안됐을때
+      console.log("카카오맵 미로딩 - 역지오코딩 스킵");
+      return;
+    }
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.coord2RegionCode(lng, lat, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        // result[0].region_1depth_name → "서울특별시"
+        // 앞 2글자만 사용 → "서울"
+        const sido = result[0].region_1depth_name.slice(0, 2);
+        console.log("현재 지역:", sido);
+        setRegion(sido);
+      }
+    });
+  }
+
 
   const requestLocation = () => {                                                                            
     setIsLoading(true);
@@ -30,21 +51,19 @@ function useCurrentLocation() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('실제 좌표:', position.coords.latitude, position.coords.longitude);
-
-        // TODO: 실제 좌표 사용 예정, 지금은 개발용 고정 좌표 (실 좌표 받아오는것 확인 완료)
-        // setLocation({
-        //   lat: position.coords.latitude,
-        //   lng: position.coords.longitude,
-        // });
-        setLocation(DEFAULT_LOCATION);
+        //실제 좌표 사용
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
         setIsLoading(false);
+        getRegionFromCoords(position.coords.latitude, position.coords.longitude);
       },
       (err) => {
-        console.error('위치 가져오기 실패:', err.message);
         setError(err.message);
         setLocation(DEFAULT_LOCATION);
         setIsLoading(false);
+        getRegionFromCoords(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);  // 에러시 기본 좌표로 역지오코딩
       },
       {
         enableHighAccuracy: false,
@@ -54,7 +73,7 @@ function useCurrentLocation() {
     );
   };
 
-  return { location, error, isLoading, requestLocation };
+  return { location, region, error, isLoading, requestLocation };
 }
 
 export default useCurrentLocation;
