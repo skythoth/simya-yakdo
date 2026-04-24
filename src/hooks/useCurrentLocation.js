@@ -20,6 +20,14 @@ function useCurrentLocation() {
     setIsLoading(true);
     setError(null);
 
+    //geolocation 사용 불가능할 경우
+    if (!navigator.geolocation) {
+      setError('브라우저가 위치 서비스를 지원하지 않습니다.');
+      setLocation(DEFAULT_LOCATION);  //기본 좌표 설정
+      setIsLoading(false);
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log('실제 좌표:', position.coords.latitude, position.coords.longitude);
@@ -35,7 +43,13 @@ function useCurrentLocation() {
       (err) => {
         console.error('위치 가져오기 실패:', err.message);
         setError(err.message);
+        setLocation(DEFAULT_LOCATION);
         setIsLoading(false);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 3000,  //타임아웃 3초 설정
+        maximumAge: 300000, //캐시된 위치 사용 시간 5분 설정
       }
     );
   };
