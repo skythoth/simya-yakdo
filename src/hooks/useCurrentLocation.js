@@ -48,7 +48,7 @@ function useCurrentLocation() {
       },
       {
         enableHighAccuracy: false,
-        timeout: 3000,  //타임아웃 3초 설정
+        timeout: 5000,  //타임아웃 5초 설정
         maximumAge: 300000, //캐시된 위치 사용 시간 5분 설정
       }
     );
