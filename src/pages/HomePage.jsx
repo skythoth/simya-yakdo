@@ -8,31 +8,35 @@ import { fetchNearbyPharmacies } from "../services/pharmacy/pharmacyApi";
 import { mapPharmacyListFromApi } from "../services/pharmacy/pharmacyMapper";
 import { calculateDistance } from "../utils/distance";
 import useCurrentLocation from "../hooks/useCurrentLocation";
+import Loading from "../components/common/Loading";
 
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
-  const { location } = useCurrentLocation();
+  const { location, region } = useCurrentLocation();
+  const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
                                                                              
-  useEffect(() => {                                                                                          
-    fetchNearbyPharmacies().then((data) => {
-      const mapped = mapPharmacyListFromApi(data.body);
+  useEffect(() => {
+    if (!region) return;
 
-      // 현재 위치 기준 거리 계산 + 정렬
+    setIsLoadingPharmacies(true);  // 로딩 시작
+
+    fetchNearbyPharmacies().then((data) => {
+      const items = data.response.body.items.item;  //api구조 변경으로 인한 수정
+      const mapped = mapPharmacyListFromApi(items);
+
       const withDistance = mapped
         .map((p) => ({
           ...p,
           distance: calculateDistance(location.lat, location.lng, p.lat, p.lng),
         }))
-        .filter((p) => p.distance <= 5000)  // 반경 5km
+        .filter((p) => p.distance <= 5000)
         .sort((a, b) => a.distance - b.distance);
 
       console.log("가까운 약국:", withDistance.length, "개");
       setPharmacies(withDistance);
-
-      // console.log('변환된 데이터', mapped);
-      // setPharmacies(mapped);
+      setIsLoadingPharmacies(false);  // 로딩 완료
     });
-  }, [location]);
+  }, [region]);   //지역이 확정되었을때만 api호출
 
   // TODO: usePharmacyStore에서 상태 가져오기
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
@@ -48,14 +52,17 @@ function HomePage() {
   return (
     <div className="home-page relative w-full h-full">
       <section className="map-section absolute inset-0 z-0 items-center justify-center">
-        {/* MapView --> Map으로 변경 (임시) */}
         <Map pharmacies={pharmacies} onMarkerClick={handleSelectPharmacy} />
       </section>
 
-      <PharmacyList
-        pharmacies={pharmacies}
-        onSelect={handleSelectPharmacy}
-      />
+       {isLoadingPharmacies ? (
+          <Loading message="약국 정보를 불러오는 중입니다..." />
+        ) : (
+          <PharmacyList
+            pharmacies={pharmacies}
+            onSelect={handleSelectPharmacy}
+          />
+        )}
 
       {/* {selectedPharmacy && (
         <PharmacyDetailModal
