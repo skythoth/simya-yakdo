@@ -21,7 +21,8 @@ function useCurrentLocation() {
   // 좌표 → 시/도 변환
   const getRegionFromCoords = (lat, lng) => {
     if (!window.kakao?.maps?.services) {    //카카오맵 로딩 안됐을때
-      console.log("카카오맵 미로딩 - 역지오코딩 스킵");
+      // 카카오맵 로딩 대기 후 재시도
+      setTimeout(() => getRegionFromCoords(lat, lng), 500);
       return;
     }
     const geocoder = new kakao.maps.services.Geocoder();

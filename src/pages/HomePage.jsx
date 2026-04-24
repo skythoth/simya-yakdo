@@ -20,7 +20,7 @@ function HomePage() {
 
     setIsLoadingPharmacies(true);  // 로딩 시작
 
-    fetchNearbyPharmacies().then((data) => {
+    fetchNearbyPharmacies(region).then((data) => {  //region을 필수로 전달
       const items = data.response.body.items.item;  //api구조 변경으로 인한 수정
       const mapped = mapPharmacyListFromApi(items);
 
