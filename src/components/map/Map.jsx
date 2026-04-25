@@ -2,25 +2,34 @@ import React from "react";
 import {useEffect, useState} from "react";
 import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
-import useCurrentLocation from "../../hooks/useCurrentLocation";
-import Loading from "../common/Loading";
 import LoadingSpinner from "../common/LoadingSpinner";
 
-const Map = ({ pharmacies = [], onMarkerClick }) => {
+const Map = ({ pharmacies = [], onMarkerClick, selectedPharmacy, location }) => {
   useKakaoLoader()
-  const { location, isLoading } = useCurrentLocation();
+  const [center, setCenter] = useState(null);
   const [positions, setPositions] = useState([]);
 
   useEffect(() => {
     setPositions(pharmacies);
   },[pharmacies])
 
-  if (isLoading) {
-    return (
-      <div>
-        <LoadingSpinner />
-      </div>
-    );
+  // 최초: 현재 위치로 중심 설정                                            
+  useEffect(() => {                                                         
+    if (location) {                                              
+      setCenter({ lat: location.lat, lng: location.lng });
+    }
+  }, [location]);
+
+  // 약국 클릭 : 해당 좌표로 중심 이동
+  useEffect(() => {
+    if(selectedPharmacy) {
+      setCenter({ lat: selectedPharmacy.lat, lng: selectedPharmacy.lng });
+      console.log("지도 이동:", selectedPharmacy.lat, selectedPharmacy.lng);
+    }
+  },[selectedPharmacy])
+
+  if (!center) {
+      return <div><LoadingSpinner /></div>;
   }
 
   return (
@@ -29,7 +38,8 @@ const Map = ({ pharmacies = [], onMarkerClick }) => {
       <div id="map" className="absolute inset-0 w-full h-full">
         <KakaoMap // 지도를 표시할 Container
           id="maps"
-          center={{ lat: location.lat, lng: location.lng }}
+          center={center}
+          isPanto={true}
           style={{ width: "100%", height: "100%" }}
           level={3} // 지도의 확대 레벨
         >

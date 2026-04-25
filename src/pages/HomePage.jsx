@@ -52,7 +52,12 @@ function HomePage() {
   return (
     <div className="home-page relative w-full h-full">
       <section className="map-section absolute inset-0 z-0 items-center justify-center">
-        <Map pharmacies={pharmacies} onMarkerClick={handleSelectPharmacy} />
+        <Map
+            pharmacies={pharmacies}
+            onSelect={handleSelectPharmacy}
+            selectedPharmacy={selectedPharmacy}
+            location={location}
+          />
       </section>
 
        {isLoadingPharmacies ? (
@@ -61,6 +66,8 @@ function HomePage() {
           <PharmacyList
             pharmacies={pharmacies}
             onSelect={handleSelectPharmacy}
+            selectedPharmacy={selectedPharmacy}
+            location={location}
           />
         )}
 

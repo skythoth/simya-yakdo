@@ -2,13 +2,14 @@ import React from "react";
 import { Heart, MapPin, Phone, ChevronDown, Clock } from "lucide-react";
 import Chip from "../common/Chip";
 
-function PharmacyListCard({ pharmacy, onClick }) {
+function PharmacyListCard({ pharmacy, onClick, isActive }) {
   const isOpening = pharmacy.statusLabel === "영업중";
 
   return (
     <div
       onClick={onClick}
-      className="p-4 mb-3 bg-white border border-gray-100 rounded-xl flex flex-col"
+      className={`p-4 mb-3 bg-white border rounded-xl flex flex-col transition-colors
+        ${isActive ? "border-indigo-500 bg-indigo-50" : "border-gray-100"}`}
     >
       {/* 이름 & 거리 & 하트 */}
       <div className="flex justify-between items-start mb-2">
