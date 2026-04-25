@@ -32,7 +32,7 @@ const fetchGetAddress = async (query) => {
 
     geocoder.addressSearch(query, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
-        resolve(result[0] ?? null);
+        resolve(result[0].address ?? null);
         return;
       }
 
