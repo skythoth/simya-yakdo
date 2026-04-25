@@ -1,19 +1,11 @@
 import React from "react";
 import { X, Navigation } from "lucide-react";
+import { formatOperatingHours } from "../../utils/pharmacyStatus";
 
 // 약국 상세 모달 - 약국 세부정보 + 길찾기 연동
 function PharmacyDetail({ pharmacy, onClose }) {
-  //임시 시간정보
-  const operatingHours = [
-    { day: "월요일", time: "09:00 - 18:00" },
-    { day: "화요일", time: "09:00 - 18:00" },
-    { day: "수요일", time: "09:00 - 18:00" },
-    { day: "목요일", time: "09:00 - 18:00" },
-    { day: "금요일", time: "09:00 - 18:00" },
-    { day: "토요일", time: "09:00 - 18:00" },
-    { day: "일요일", time: "약국휴무" },
-    { day: "공휴일", time: "약국휴뮤" },
-  ];
+  const operatingHours = formatOperatingHours(pharmacy.operatingHours);
+
   const handleDirections = () => {
     // TODO: 카카오맵 길찾기 URL로 이동
     console.log("길찾기:", pharmacy.name);
