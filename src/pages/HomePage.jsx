@@ -1,15 +1,12 @@
 // 메인 페이지 - 지도 + 약국 리스트 조합
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Map from "../components/map/Map";
 import PharmacyList from "../components/pharmacy/PharmacyList";
 // import PharmacyDetailModal from "../components/pharmacy/PharmacyDetailModal";
-import { mockPharmacies } from "../mocks/pharmacies";
-import { fetchNearbyPharmacies } from "../services/pharmacy/pharmacyApi";
-import { mapPharmacyListFromApi } from "../services/pharmacy/pharmacyMapper";
-import { calculateDistance } from "../utils/distance";
-import useCurrentLocation from "../hooks/useCurrentLocation";
 import Loading from "../components/common/Loading";
+import useCurrentLocation from "../hooks/useCurrentLocation";
 import { useGetPharmacyQuery } from "../hooks/useGetPharmacy";
+import { calculateDistance } from "../utils/distance";
 
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
