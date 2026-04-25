@@ -3,32 +3,107 @@
 
 /**
  * 현재 시간 기준 약국 운영 상태 반환
- * TODO: operatingHours 파싱 및 판별 로직
- * @returns 'open' | 'closed' | 'unknown'
  */
-export function getPharmacyStatus(operatingHours) {
-  if (!operatingHours) return 'unknown';
-  // TODO: 영업시간 파싱 → 현재 시간과 비교
-  console.log('getPharmacyStatus - 미구현');
-  return 'unknown';
+export function getPharmacyStatus(operatingHours, isHoliday = false) {
+  if (!operatingHours) return false;
+
+  const dayKeys = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+
+  const toMinutes = (value) => {
+    if (!value || typeof value !== "string") return null;
+
+    const [hour, minute] = value.split(":").map(Number);
+
+    if (Number.isNaN(hour) || Number.isNaN(minute)) {
+      return null;
+    }
+
+    return hour * 60 + minute;
+  };
+
+  const now = new Date();
+  const todayKey = dayKeys[now.getDay()];
+  const todayHours = isHoliday
+    ? operatingHours.holiday || operatingHours[todayKey]
+    : operatingHours[todayKey];
+  const openMinutes = toMinutes(todayHours?.open);
+  const closeMinutes = toMinutes(todayHours?.close);
+
+  if (openMinutes === null || closeMinutes === null) return false;
+
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  if (closeMinutes <= openMinutes) {
+    return currentMinutes >= openMinutes || currentMinutes < closeMinutes;
+  }
+
+  return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
 }
 
 /**
  * 영업시간 문자열 포맷
- * TODO: 요일별 영업시간 표시용 포맷
+ * 요일별 영업시간 표시용 포맷
  */
 export function formatOperatingHours(operatingHours) {
-  if (!operatingHours) return '영업시간 정보 없음';
-  // TODO: 보기 좋은 형태로 변환
-  return '영업시간 정보 확인 필요';
+  if (!operatingHours) return [];
+
+  const dayEntries = [
+    ["월요일", operatingHours.monday],
+    ["화요일", operatingHours.tuesday],
+    ["수요일", operatingHours.wednesday],
+    ["목요일", operatingHours.thursday],
+    ["금요일", operatingHours.friday],
+    ["토요일", operatingHours.saturday],
+    ["일요일", operatingHours.sunday],
+    ["공휴일", operatingHours.holiday],
+  ];
+
+  return dayEntries.map(([day, hours]) => ({
+    day,
+    time:
+      hours?.open && hours?.close ? `${hours.open} - ${hours.close}` : "휴무",
+  }));
 }
 
 /**
- * 심야 운영 여부 판별
- * TODO: 심야 기준 시간 정의 및 판별
+ * 야간운영 여부 판별
  */
 export function isLateNightPharmacy(operatingHours) {
-  // TODO: 심야(예: 22시 이후) 운영 여부 판별
-  console.log('isLateNightPharmacy - 미구현');
-  return false;
+  if (!operatingHours) return false;
+
+  const toMinutes = (value) => {
+    if (!value || typeof value !== "string") return null;
+
+    const [hour, minute] = value.split(":").map(Number);
+
+    if (Number.isNaN(hour) || Number.isNaN(minute)) {
+      return null;
+    }
+
+    return hour * 60 + minute;
+  };
+
+  return Object.values(operatingHours).some((hours) => {
+    const openMinutes = toMinutes(hours?.open);
+    const closeMinutes = toMinutes(hours?.close);
+
+    if (openMinutes === null || closeMinutes === null) {
+      return false;
+    }
+
+    // 자정을 넘겨 운영하는 경우도 심야 영업으로 본다.
+    if (closeMinutes <= openMinutes) {
+      return true;
+    }
+
+    return closeMinutes >= 22 * 60;
+  });
 }

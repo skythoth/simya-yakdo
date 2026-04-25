@@ -6,6 +6,7 @@ import EmptyState from "../common/EmptyState";
 // import { useGetPharmacyQuery } from "../../hooks/useGetPharmacy";
 import LoadingSpinner from "../common/LoadingSpinner";
 import PharmacyToggle from "./PharmacyToggle";
+import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
 
 const DAY_KOR = {
   monday: "월요일",
@@ -21,6 +22,8 @@ const DAY_KOR = {
 const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openId, setOpenId] = useState(null);
+
+  const isHoliday = useGetHolidayQuery().data;
   // const {
   //   data: pharmacies = [],
   //   isLoading,

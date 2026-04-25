@@ -1,10 +1,18 @@
 import React from "react";
 import { Heart, MapPin, Phone, ChevronDown, Clock } from "lucide-react";
 import Chip from "../common/Chip";
+import {
+  getPharmacyStatus,
+  isLateNightPharmacy,
+} from "../../utils/pharmacyStatus";
 
-function PharmacyListCard({ pharmacy, onClick, isActive }) {
-  const isOpening = pharmacy.statusLabel === "영업중";
-
+function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
+  const isMidnight = isLateNightPharmacy(pharmacy.operatingHours);
+  const isOpen = getPharmacyStatus(pharmacy.operatingHours, isHoliday);
+  const HolidayOpen = pharmacy.operatingHours.holiday?.open ? true : false;
+  const today = new Date()
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toLowerCase();
   return (
     <div
       onClick={onClick}
@@ -31,8 +39,9 @@ function PharmacyListCard({ pharmacy, onClick, isActive }) {
 
       {/* 상태 칩*/}
       <div className="flex items-center gap-1.5 mb-3">
-        {pharmacy.isMidnight && <Chip label="심야" variant="midnight" />}
-        <Chip label={isOpening ? "영업중" : "영업종료"} active={isOpening} />
+        <Chip label={isOpen ? "영업중" : "영업종료"} active={isOpen} />
+        {isMidnight && <Chip label="야간운영" variant="midnight" />}
+        {HolidayOpen && <Chip label="공휴일 운영" variant="holiday" />}
       </div>
 
       {/* 세부내용 */}
@@ -41,7 +50,9 @@ function PharmacyListCard({ pharmacy, onClick, isActive }) {
         <div className="flex items-center gap-2 text-gray-700">
           <Clock size={15} className="text-gray-400 shrink-0" />
           <span className="text-[13px]">
-            {isOpening ? pharmacy.openingTime || "09:00~18:00" : "영업 종료"}
+            {isOpen
+              ? `${pharmacy.operatingHours[today]?.open || "영업시간 정보 없음"} ~ ${pharmacy.operatingHours[today]?.close || "영업시간 정보 없음"}`
+              : "영업종료"}
           </span>
         </div>
 

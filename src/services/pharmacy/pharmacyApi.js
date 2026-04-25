@@ -36,7 +36,6 @@ export async function fetchNearbyPharmacies(pageNo = 1, numOfRows = 5000) {
     },
   });
 
-  console.log("API 응답:", response.data);
   return response.data;
 }
 /**
