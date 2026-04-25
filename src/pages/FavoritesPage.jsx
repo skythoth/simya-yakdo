@@ -1,5 +1,5 @@
 import React from "react";
-import PharmacyFavoriteCard from "../components/Pharmacy/PharmacyFavoriteCard";
+import PharmacyFavoriteCard from "../components/pharmacy/PharmacyFavoriteCard";
 
 const FavoritesPage = ({ pharmacies = [], onSelect }) => {
   return (
