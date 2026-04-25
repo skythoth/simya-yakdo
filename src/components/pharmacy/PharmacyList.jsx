@@ -18,7 +18,7 @@ const DAY_KOR = {
   holiday: "공휴일",
 };
 
-const PharmacyList = ({ pharmacies = [], onSelect }) => {
+const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openId, setOpenId] = useState(null);
   // const {
@@ -67,6 +67,7 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
                   <PharmacyListCard
                     pharmacy={pharmacy}
                     onClick={() => handleCardClick(pharmacy)}
+                    isActive={selectedPharmacy?.id === pharmacy.id}
                   />
                   <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out rounded-b-lg
