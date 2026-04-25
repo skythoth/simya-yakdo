@@ -38,7 +38,8 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
   h-[60dvh] md:h-full z-50 bg-white 
   absolute bottom-0 left-0 md:top-0 
   shadow-2xl transition-transform duration-300 ease-in-out pointer-events-auto 
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
+  pb-[env(safe-area-inset-bottom)]
+  ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
 
   // if (isLoading) return <LoadingSpinner />;
   return (
@@ -57,7 +58,7 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
           </div>
           <div className="mb-2"></div>
           {/* 약국리스트 보이기 */}
-          <div className="flex-1 relative  z-10 overflow-y-auto space-y-2 custom-scrollbar p-3">
+          <div className="flex-1 relative  z-10 overflow-y-auto space-y-2 custom-scrollbar p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] ">
             {!pharmacies || pharmacies.length === 0 ? (
               <EmptyState message="주변 약국 정보가 없습니다." />
             ) : (
@@ -90,7 +91,8 @@ const PharmacyList = ({ pharmacies = [], onSelect }) => {
             isOpen
               ? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
               : "opacity-100 pointer-events-auto delay-300 md:delay-0"
-          }`}
+          }
+          mb-[env(safe-area-inset-bottom)]`}
       >
         <PharmacyToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
       </div>
