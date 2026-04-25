@@ -2,16 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { mapPharmacyFromApi } from "../services/pharmacy/pharmacyMapper";
 
+const API_BASE_URL = "/api/pharmacy";
+
 const fetchGetPharmacy = async () => {
-  const response = await axios.get("/api/safetydata/DSSP-IF-00155", {
+  const response = await axios.get(API_BASE_URL, {
     params: {
       pageNo: 1,
-      numOfRows: 10,
-      returnType: "json",
+      numOfRows: 30000,
+      _type: "json",
     },
   });
 
-  const pharmacyList = response.data?.body;
+  const pharmacyList = response.data?.response?.body?.items?.item;
 
   if (!Array.isArray(pharmacyList)) {
     return [];
