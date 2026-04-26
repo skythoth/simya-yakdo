@@ -1,7 +1,14 @@
 import React from "react";
 import PharmacyFavoriteCard from "../components/pharmacy/PharmacyFavoriteCard";
+import usePharmacyStore from "../stores/usePharmacyStore";
+import EmptyState from "../components/common/EmptyState";
 
-const FavoritesPage = ({ pharmacies = [], onSelect }) => {
+const FavoritesPage = ({ onSelect }) => {
+  const { favorites } = usePharmacyStore();
+  const handleCardClick = (pharmacy) => {
+    if (onSelect) onSelect(pharmacy);
+  };
+
   return (
     <div className="pb-20 bg-gray-50 min-h-screen">
       <div className="w-full md:max-w-[800px] mx-auto px-4 pt-8">
@@ -14,13 +21,17 @@ const FavoritesPage = ({ pharmacies = [], onSelect }) => {
 
         <div className="flex flex-col">
           {/*약국리스트*/}
-          {pharmacies.map((pharmacy) => (
-            <PharmacyFavoriteCard
-              key={pharmacy.id}
-              pharmacy={pharmacy}
-              onClick={onClick}
-            />
-          ))}
+          {!favorites || favorites.length === 0 ? (
+            <EmptyState message="아직 즐겨찾기한 약국이 없습니다." />
+          ) : (
+            favorites.map((pharmacy) => (
+              <PharmacyFavoriteCard
+                key={pharmacy.id}
+                pharmacy={pharmacy}
+                onClick={() => handleCardClick(pharmacy)}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
