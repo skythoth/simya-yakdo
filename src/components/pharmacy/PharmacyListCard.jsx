@@ -1,20 +1,16 @@
 import React from "react";
 import { Heart, MapPin, Phone, ChevronDown, Clock } from "lucide-react";
 import Chip from "../common/Chip";
-import usePharmacyStore from "../../stores/usePharmacyStore"; // 1. 린다님의 스토어 임포트
+import usePharmacyStore from "../../stores/usePharmacyStore";
 import {
   getPharmacyStatus,
   isLateNightPharmacy,
 } from "../../utils/pharmacyStatus";
 
 function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
-  // 2. Zustand 스토어에서 필요한 기능 가져오기
   const { favorites, toggleFavorite } = usePharmacyStore();
-
-  // 3. 현재 약국이 즐겨찾기에 있는지 확인
   const isFavorite = favorites.some((fav) => fav.id === pharmacy.id);
 
-  // 4. 하트 클릭 핸들러 (이벤트 전파 방지 포함)
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     toggleFavorite(pharmacy);
@@ -43,7 +39,7 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
           </span>
         </div>
 
-        {/* 5. 하트 버튼에 로직 적용 */}
+        {/* 즐겨찾기 버튼 */}
         <button
           onClick={handleFavoriteClick}
           className="p-1 -mt-1 -mr-1 transition-colors"
@@ -51,13 +47,13 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
           <Heart
             size={22}
             className={
-              isFavorite ? "fill-red-500 text-red-500" : "text-gray-300"
+              isFavorite ? "fill-red-700 text-red-700" : "text-gray-300"
             }
           />
         </button>
       </div>
 
-      {/* ... 나머지 중단/하단 코드는 동일하게 유지 ... */}
+      {/* 칩 */}
       <div className="flex items-center gap-1.5 mb-3">
         <Chip label={isOpen ? "영업중" : "영업종료"} active={isOpen} />
         {isMidnight && <Chip label="야간운영" variant="midnight" />}
@@ -75,7 +71,9 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
         </div>
         <div className="flex items-center gap-2 text-gray-500">
           <MapPin size={15} className="text-gray-400 shrink-0" />
-          <span className="text-[13px] truncate">{pharmacy.address}</span>
+          <span className="text-[13px] leading-relaxed break-keep">
+            {pharmacy.address}
+          </span>
         </div>
       </div>
 

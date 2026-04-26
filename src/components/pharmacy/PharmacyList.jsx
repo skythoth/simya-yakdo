@@ -8,28 +8,11 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import PharmacyToggle from "./PharmacyToggle";
 import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
 
-const DAY_KOR = {
-  monday: "월요일",
-  tuesday: "화요일",
-  wednesday: "수요일",
-  thursday: "목요일",
-  friday: "금요일",
-  saturday: "토요일",
-  sunday: "일요일",
-  holiday: "공휴일",
-};
-
 const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openId, setOpenId] = useState(null);
 
   const isHoliday = useGetHolidayQuery().data;
-  // const {
-  //   data: pharmacies = [],
-  //   isLoading,
-  //   isError,
-  //   error,
-  // } = useGetPharmacyQuery(37.5666, 126.9784);
 
   const handleCardClick = (pharmacy) => {
     setOpenId(openId === pharmacy.id ? null : pharmacy.id);
