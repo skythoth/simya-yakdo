@@ -20,13 +20,16 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy, isOpen, onT
 
   const cardRefs = useRef({});
 
-  // 선택된 약국으로 자동 스크롤
+  // 선택된 약국으로 자동 스크롤 (이전 상세정보 닫힘 애니메이션 후)
   useEffect(() => {
     if (selectedPharmacy && cardRefs.current[selectedPharmacy.id]) {
-      cardRefs.current[selectedPharmacy.id].scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      const timer = setTimeout(() => {
+        cardRefs.current[selectedPharmacy.id]?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 320);
+      return () => clearTimeout(timer);
     }
   }, [selectedPharmacy]);
 
