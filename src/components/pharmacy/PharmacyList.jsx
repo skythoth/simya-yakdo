@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import PharmacyListCard from "./PharmacyListCard";
 import PharmacyDetail from "./PharmacyDetail";
@@ -18,6 +18,18 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
     setOpenId(openId === pharmacy.id ? null : pharmacy.id);
     onSelect(pharmacy);
   };
+
+  const cardRefs = useRef({});
+
+  // 선택된 약국으로 자동 스크롤
+  useEffect(() => {
+    if (selectedPharmacy && cardRefs.current[selectedPharmacy.id]) {
+      cardRefs.current[selectedPharmacy.id].scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [selectedPharmacy]);
 
   // style components
   const sideBar = `w-full md:w-[360px] 
@@ -49,7 +61,11 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
               <EmptyState message="주변 약국 정보가 없습니다." />
             ) : (
               pharmacies.map((pharmacy) => (
-                <div key={pharmacy.id} className="flex flex-col">
+                <div
+                  key={pharmacy.id}
+                  ref={(el) => (cardRefs.current[pharmacy.id] = el)}
+                  className="flex flex-col"
+                >
                   <PharmacyListCard
                     pharmacy={pharmacy}
                     onClick={() => handleCardClick(pharmacy)}
