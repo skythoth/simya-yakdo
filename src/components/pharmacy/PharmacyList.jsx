@@ -8,8 +8,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import PharmacyToggle from "./PharmacyToggle";
 import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
 
-const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy, isOpen, onToggle }) => {
   const [openId, setOpenId] = useState(null);
 
   const isHoliday = useGetHolidayQuery().data;
@@ -48,7 +47,7 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
           <div className="relative z-30 p-4 border-b bg-white shrink-0 flex justify-between items-center">
             <h2 className="text-xl font-bold">약국 목록</h2>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => onToggle(false)}
               className="md:hidden p-2 hover:bg-gray-100 rounded-full"
             >
               <X size={24} className="text-gray-600" />
@@ -97,7 +96,7 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy }) => {
           }
           mb-[env(safe-area-inset-bottom)]`}
       >
-        <PharmacyToggle isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+        <PharmacyToggle isOpen={isOpen} onClick={() => onToggle(!isOpen)} />
       </div>
     </div>
   );
