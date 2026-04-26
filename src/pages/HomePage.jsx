@@ -12,6 +12,7 @@ function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
   const { location, region } = useCurrentLocation();
   const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(false);
 
   // TODO: useGetPharmacyQuery로 대체, 검토 필요
 
@@ -71,12 +72,14 @@ function HomePage() {
 
   return (
     <div className="home-page relative w-full h-full">
-      <section className="map-section absolute inset-0 z-0 items-center justify-center">
+      <section className={`map-section absolute top-0 right-0 z-0 items-center justify-center transition-all duration-300 ease-in-out
+        ${isListOpen ? 'bottom-[60dvh] left-0 md:bottom-0 md:left-[360px]' : 'bottom-0 left-0'}`}>
         <Map
           pharmacies={pharmacies}
           onSelect={handleSelectPharmacy}
           selectedPharmacy={selectedPharmacy}
           location={location}
+          isListOpen={isListOpen}
         />
       </section>
 
@@ -88,6 +91,8 @@ function HomePage() {
           onSelect={handleSelectPharmacy}
           selectedPharmacy={selectedPharmacy}
           location={location}
+          isOpen={isListOpen}
+          onToggle={setIsListOpen}
         />
       )}
 

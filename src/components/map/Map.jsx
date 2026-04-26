@@ -1,11 +1,12 @@
 import React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import LoadingSpinner from "../common/LoadingSpinner";
 
-const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location }) => {
+const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen }) => {
   useKakaoLoader()
+  const mapRef = useRef(null);
   const [center, setCenter] = useState(null);
   const [positions, setPositions] = useState([]);
 
@@ -19,6 +20,14 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location }) => {
       setCenter({ lat: location.lat, lng: location.lng });
     }
   }, [location]);
+
+  // 리스트 열림/닫힘 시 지도 relayout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      mapRef.current?.relayout();
+    }, 310);
+    return () => clearTimeout(timer);
+  }, [isListOpen]);
 
   // 약국 클릭 : 해당 좌표로 중심 이동
   useEffect(() => {
@@ -42,6 +51,7 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location }) => {
           isPanto={true}
           style={{ width: "100%", height: "100%" }}
           level={3} // 지도의 확대 레벨
+          onCreate={(map) => (mapRef.current = map)}
         >
           <MarkerClusterer
             averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
