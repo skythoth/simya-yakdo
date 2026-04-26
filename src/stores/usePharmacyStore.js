@@ -1,4 +1,5 @@
 // 약국 관련 전역 상태 (Zustand)
+import { stackTraceLimit } from "postcss/lib/css-syntax-error";
 import { create } from "zustand";
 
 const usePharmacyStore = create((set) => ({
@@ -21,9 +22,16 @@ const usePharmacyStore = create((set) => ({
   clearSelection: () => set({ selectedPharmacy: null }),
 
   // 즐겨찾기 토글
-  toggleFavorite: (pharmacyId) => {
-    // TODO: 즐겨찾기 추가/제거 로직
-    console.log("즐겨찾기 토글:", pharmacyId);
+  toggleFavorite: (pharmacy) => {
+    set((state) => {
+      const isFavorite = state.favorites.some((fav) => fav.id === pharmacy.id);
+      const newFavorites = isFavorite
+        ? state.favorites.filter((fav) => fav.id !== pharmacy.id)
+        : [...state.favorites, pharmacy];
+
+      console.log("즐겨찾기 목록 업데이트:", newFavorites);
+      return { favorites: newFavorites };
+    });
   },
 
   // 필터 변경
