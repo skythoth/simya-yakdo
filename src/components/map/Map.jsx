@@ -4,7 +4,7 @@ import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sd
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import LoadingSpinner from "../common/LoadingSpinner";
 
-const Map = ({ pharmacies = [], onMarkerClick, selectedPharmacy, location }) => {
+const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location }) => {
   useKakaoLoader()
   const [center, setCenter] = useState(null);
   const [positions, setPositions] = useState([]);
@@ -52,7 +52,7 @@ const Map = ({ pharmacies = [], onMarkerClick, selectedPharmacy, location }) => 
                 key={pharmacy.id}
                 position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
                 //title={pharmacy.name}
-                onClick={() => onMarkerClick(pharmacy)}
+                onClick={() => onSelect(pharmacy)}
               />
             ))}
           </MarkerClusterer>
