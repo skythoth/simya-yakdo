@@ -6,6 +6,7 @@ import {
   getPharmacyStatus,
   isLateNightPharmacy,
 } from "../../utils/pharmacyStatus";
+import { formatDistance } from "../../utils/distance";
 
 function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
   const { favorites, toggleFavorite } = usePharmacyStore();
@@ -35,7 +36,7 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
             {pharmacy.name}
           </strong>
           <span className="text-[14px] font-semibold text-sky-600 shrink-0">
-            {pharmacy.distance ? `${pharmacy.distance}m` : ""}
+            {pharmacy.distance ? formatDistance(pharmacy.distance) : ""}
           </span>
         </div>
 

@@ -8,7 +8,7 @@ const useFilterStore = create((set) => ({
   selectedDistrict: "",
   setSelectedDistrict: (district) => set({ selectedDistrict: district }),
 
-  openFilter: "전체",
+  openFilter: "",
   setOpenFilter: (filter) => set({ openFilter: filter }),
 }));
 
