@@ -16,6 +16,7 @@ const PharmacyList = ({
   selectedPharmacy,
   isOpen,
   onToggle,
+  isHoliday,
 }) => {
   const [openId, setOpenId] = useState(null);
 
@@ -28,7 +29,6 @@ const PharmacyList = ({
     setOpenFilter,
   } = useFilterStore();
 
-  const isHoliday = useGetHolidayQuery().data;
   const districtOptions = ADMINISTRATIVE_DISTRICTS[selectedSido] ?? [];
 
   const handleCardClick = (pharmacy) => {
@@ -86,9 +86,8 @@ const PharmacyList = ({
                 );
               }}
               className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
-              aria-label="시도 선택"
             >
-              <option value="">전체</option>
+              <option value="">내 위치</option>
               {Object.keys(ADMINISTRATIVE_DISTRICTS).map((sido) => (
                 <option key={sido} value={sido}>
                   {sido}
@@ -100,7 +99,6 @@ const PharmacyList = ({
                 value={selectedDistrict}
                 onChange={(event) => setSelectedDistrict(event.target.value)}
                 className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
-                aria-label="시군구 선택"
               >
                 {districtOptions.map((district) => (
                   <option key={district} value={district}>
@@ -115,7 +113,7 @@ const PharmacyList = ({
               className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
               aria-label="영업시간"
             >
-              <option value={"전체"}>전체</option>
+              <option value={""}>전체</option>
               <option value={"영업중"}>영업중</option>
             </select>
           </div>
@@ -135,6 +133,7 @@ const PharmacyList = ({
                     pharmacy={pharmacy}
                     onClick={() => handleCardClick(pharmacy)}
                     isActive={selectedPharmacy?.id === pharmacy.id}
+                    isHoliday={isHoliday}
                   />
                   <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out rounded-b-lg

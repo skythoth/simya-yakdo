@@ -7,12 +7,17 @@ import Loading from "../components/common/Loading";
 import useCurrentLocation from "../hooks/useCurrentLocation";
 import { useGetPharmacyQuery } from "../hooks/useGetPharmacy";
 import { calculateDistance } from "../utils/distance";
+import useFilterStore from "../stores/useFilterStore";
+import { getPharmacyStatus } from "../utils/pharmacyStatus";
+import { useGetHolidayQuery } from "../hooks/useGetHoliday";
 
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
   const { location, region } = useCurrentLocation();
   const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
+  const isHoliday = useGetHolidayQuery().data;
+  const { selectedSido, selectedDistrict, openFilter } = useFilterStore();
 
   // TODO: useGetPharmacyQuery로 대체, 검토 필요
 
@@ -25,15 +30,35 @@ function HomePage() {
           ...p,
           distance: calculateDistance(location.lat, location.lng, p.lat, p.lng),
         }))
-        .filter((p) => p.distance <= 5000)
-        .sort((a, b) => a.distance - b.distance);
+        .filter((p) => {
+          if (selectedDistrict) return true;
+          else return p.distance <= 2000;
+        })
 
+        .filter((p) =>
+          selectedDistrict
+            ? p.address.includes(selectedSido + " " + selectedDistrict)
+            : true,
+        )
+        .filter((p) => {
+          if (openFilter === "") return true;
+          if (openFilter === "영업중")
+            return getPharmacyStatus(p.operatingHours, isHoliday);
+        })
+        .filter((p) => {
+          if (p.lat) return true;
+        })
+        .filter((p) => {
+          if (p.lng) return true;
+        })
+        .sort((a, b) => a.distance - b.distance);
       console.log("가까운 약국:", withDistance.length, "개");
+      console.log(withDistance[0]);
       setPharmacies(withDistance);
     } else {
       setPharmacies([]);
     }
-  }, [data, location]);
+  }, [data, location, selectedDistrict, openFilter]);
 
   // useEffect(() => {
   //   if (!region) return;
@@ -72,8 +97,10 @@ function HomePage() {
 
   return (
     <div className="home-page relative w-full h-full">
-      <section className={`map-section absolute top-0 right-0 z-0 items-center justify-center transition-all duration-300 ease-in-out
-        ${isListOpen ? 'bottom-[60dvh] left-0 md:bottom-0 md:left-[360px]' : 'bottom-0 left-0'}`}>
+      <section
+        className={`map-section absolute top-0 right-0 z-0 items-center justify-center transition-all duration-300 ease-in-out
+        ${isListOpen ? "bottom-[60dvh] left-0 md:bottom-0 md:left-[360px]" : "bottom-0 left-0"}`}
+      >
         <Map
           pharmacies={pharmacies}
           onSelect={handleSelectPharmacy}
@@ -92,6 +119,7 @@ function HomePage() {
           selectedPharmacy={selectedPharmacy}
           location={location}
           isOpen={isListOpen}
+          isHoliday={isHoliday}
           onToggle={setIsListOpen}
         />
       )}
