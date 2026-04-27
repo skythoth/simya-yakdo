@@ -53,7 +53,6 @@ function HomePage() {
         })
         .sort((a, b) => a.distance - b.distance);
       console.log("가까운 약국:", withDistance.length, "개");
-      console.log(withDistance[0]);
       setPharmacies(withDistance);
     } else {
       setPharmacies([]);
