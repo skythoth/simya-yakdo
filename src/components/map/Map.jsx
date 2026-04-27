@@ -3,9 +3,19 @@ import {useEffect, useRef, useState} from "react";
 import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import LoadingSpinner from "../common/LoadingSpinner";
+import { getPharmacyStatus } from "../../utils/pharmacyStatus";
+import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
+
+const CLOSED_MARKER_SRC = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="29" height="42" viewBox="0 0 29 42">
+    <path d="M14.5 0C6.5 0 0 6.5 0 14.5C0 25.3 14.5 42 14.5 42S29 25.3 29 14.5C29 6.5 22.5 0 14.5 0Z" fill="#9E9E9E"/>
+    <circle cx="14.5" cy="14.5" r="5.5" fill="white"/>
+  </svg>`
+)}`;
 
 const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen }) => {
   useKakaoLoader()
+  const isHoliday = useGetHolidayQuery().data;
   const mapRef = useRef(null);
   const [center, setCenter] = useState(null);
   const [positions, setPositions] = useState([]);
@@ -57,14 +67,22 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen
             averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
             minLevel={6} // 클러스터 할 최소 지도 레벨
           >
-            {pharmacies.map((pharmacy) => (
-              <MapMarker 
-                key={pharmacy.id}
-                position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
-                //title={pharmacy.name}
-                onClick={() => onSelect(pharmacy)}
-              />
-            ))}
+            {pharmacies.map((pharmacy) => {
+              const isOpen = getPharmacyStatus(pharmacy.operatingHours, isHoliday);
+              return (
+                <MapMarker
+                  key={pharmacy.id}
+                  position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
+                  onClick={() => onSelect(pharmacy)}
+                  {...(!isOpen && {
+                    image: {
+                      src: CLOSED_MARKER_SRC,
+                      size: { width: 29, height: 42 },
+                    },
+                  })}
+                />
+              );
+            })}
           </MarkerClusterer>
         </KakaoMap>
       </div>
