@@ -7,11 +7,29 @@ import EmptyState from "../common/EmptyState";
 import LoadingSpinner from "../common/LoadingSpinner";
 import PharmacyToggle from "./PharmacyToggle";
 import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
+import { ADMINISTRATIVE_DISTRICTS } from "../../constants/filterOptions";
+import useFilterStore from "../../stores/useFilterStore";
 
-const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy, isOpen, onToggle }) => {
+const PharmacyList = ({
+  pharmacies = [],
+  onSelect,
+  selectedPharmacy,
+  isOpen,
+  onToggle,
+}) => {
   const [openId, setOpenId] = useState(null);
 
+  const {
+    selectedSido,
+    setSelectedSido,
+    selectedDistrict,
+    setSelectedDistrict,
+    openFilter,
+    setOpenFilter,
+  } = useFilterStore();
+
   const isHoliday = useGetHolidayQuery().data;
+  const districtOptions = ADMINISTRATIVE_DISTRICTS[selectedSido] ?? [];
 
   const handleCardClick = (pharmacy) => {
     setOpenId(openId === pharmacy.id ? null : pharmacy.id);
@@ -52,6 +70,51 @@ const PharmacyList = ({ pharmacies = [], onSelect, selectedPharmacy, isOpen, onT
             >
               <X size={24} className="text-gray-600" />
             </button>
+          </div>
+          {/* 임시 필터 */}
+          <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600">
+            <select
+              value={selectedSido}
+              onChange={(event) => {
+                const nextSido = event.target.value;
+                setSelectedSido(nextSido);
+                setSelectedDistrict(
+                  (ADMINISTRATIVE_DISTRICTS[nextSido] ?? [""])[0] ?? "",
+                );
+              }}
+              className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
+              aria-label="시도 선택"
+            >
+              <option value="">전체</option>
+              {Object.keys(ADMINISTRATIVE_DISTRICTS).map((sido) => (
+                <option key={sido} value={sido}>
+                  {sido}
+                </option>
+              ))}
+            </select>
+            {selectedSido && (
+              <select
+                value={selectedDistrict}
+                onChange={(event) => setSelectedDistrict(event.target.value)}
+                className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
+                aria-label="시군구 선택"
+              >
+                {districtOptions.map((district) => (
+                  <option key={district} value={district}>
+                    {district}
+                  </option>
+                ))}
+              </select>
+            )}
+            <select
+              value={openFilter}
+              onChange={(event) => setOpenFilter(event.target.value)}
+              className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
+              aria-label="영업시간"
+            >
+              <option value={"전체"}>전체</option>
+              <option value={"영업중"}>영업중</option>
+            </select>
           </div>
           <div className="mb-2"></div>
           {/* 약국리스트 보이기 */}
