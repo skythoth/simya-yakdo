@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-<<<<<<< HEAD
-
-=======
->>>>>>> temp
 import { X, ChevronDown } from "lucide-react";
 import PharmacyListCard from "./PharmacyListCard";
 import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
-import PharmacyToggle from "./PharmacyToggle";
+import PharmacyToggle from "./PharmacyToggle"; // 토글 버튼 임포트 확인
 import { ADMINISTRATIVE_DISTRICTS } from "../../constants/filterOptions";
 import useFilterStore from "../../stores/useFilterStore";
 
@@ -33,17 +29,15 @@ const PharmacyList = ({
 
   const districtOptions = ADMINISTRATIVE_DISTRICTS[selectedSido] ?? [];
 
-  // 필터링 함수
+  // 시/도 변경 핸들러
   const handleSidoChange = (value) => {
-    const nextSido = value;
-    // 시,도 상태 업데이트
-    setSelectedSido(nextSido);
-    const defaultDistrict =
-      (ADMINISTRATIVE_DISTRICTS[nextSido] ?? [""])[0] ?? "";
+    setSelectedSido(value);
+    const defaultDistrict = (ADMINISTRATIVE_DISTRICTS[value] ?? [""])[0] ?? "";
     setSelectedDistrict(defaultDistrict);
     setActiveDropdown(null);
   };
-  // 구 선택하기
+
+  // 구/군 변경 핸들러
   const handleDistrictChange = (value) => {
     setSelectedDistrict(value);
     setActiveDropdown(null);
@@ -56,7 +50,7 @@ const PharmacyList = ({
 
   const cardRefs = useRef({});
 
-  // 선택된 약국으로 자동 스크롤 (이전 상세정보 닫힘 애니메이션 후)
+  // 선택된 약국으로 스크롤 이동
   useEffect(() => {
     if (selectedPharmacy && cardRefs.current[selectedPharmacy.id]) {
       const timer = setTimeout(() => {
@@ -69,13 +63,14 @@ const PharmacyList = ({
     }
   }, [selectedPharmacy]);
 
+  // 바깥 클릭 시 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = () => setActiveDropdown(null);
     window.addEventListener("click", handleClickOutside);
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // style components
+  // 스타일 정의
   const sideBar = `w-full md:w-[360px] 
   h-[60dvh] md:h-full z-50 bg-white 
   absolute bottom-0 left-0 md:top-0 
@@ -83,7 +78,6 @@ const PharmacyList = ({
   pb-[env(safe-area-inset-bottom)]
   ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
 
-  // 셀렉트 드롭다운 스타일
   const dropdownTrigger =
     "flex items-center justify-between w-full border border-gray-300 px-3 py-2 text-[13px] text-gray-700 rounded-md bg-white cursor-pointer hover:border-indigo-300 transition-all";
   const dropdownList =
@@ -95,6 +89,7 @@ const PharmacyList = ({
     <div className="absolute left-0 top-0 w-full h-full overflow-hidden z-50 pointer-events-none">
       <section className={sideBar} onClick={(e) => e.stopPropagation()}>
         <div className="h-full flex flex-col relative overflow-hidden">
+          {/* 1. 헤더 및 필터 영역 */}
           <div className="relative z-30 p-4 border-b border-gray-200 bg-white shrink-0 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-gray-700">약국 목록</h2>
@@ -132,7 +127,7 @@ const PharmacyList = ({
                       className={dropdownItem}
                       onClick={() => handleSidoChange("")}
                     >
-                      전체(시/도)
+                      전체
                     </li>
                     {Object.keys(ADMINISTRATIVE_DISTRICTS).map((sido) => (
                       <li
@@ -225,11 +220,8 @@ const PharmacyList = ({
             </div>
           </div>
 
-          <div className="mb-2"></div>
-
-          <div className="mb-2"></div>
-          {/* 약국리스트 보이기 */}
-          <div className="flex-1 relative  z-10 overflow-y-auto space-y-2 custom-scrollbar p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] ">
+          {/* 2. 약국 리스트 영역 */}
+          <div className="flex-1 relative z-10 overflow-y-auto space-y-2 custom-scrollbar p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] ">
             {!pharmacies || pharmacies.length === 0 ? (
               <EmptyState message="주변 약국 정보가 없습니다." />
             ) : (
@@ -261,7 +253,7 @@ const PharmacyList = ({
         </div>
       </section>
 
-      {/*  2. 토글버튼  */}
+      {/* 3. 토글 버튼 (사이드바 열기/닫기) */}
       <div
         className={`transition-all duration-100 
           ${
