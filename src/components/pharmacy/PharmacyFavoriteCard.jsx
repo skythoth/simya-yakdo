@@ -51,8 +51,11 @@ function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
             {pharmacy.name}
           </strong>
         </div>
-        <button className="p-1 -mt-1 -mr-1">
-          <Heart size={22} className="text-red-700 fill-red-700" />
+        <button className="p-1 -mt-1 -mr-1" onClick={handleFavoriteClick}>
+          <Heart
+            size={22}
+            className="text-red-700 fill-red-700 cursor-pointer"
+          />
         </button>
       </div>
 
@@ -95,7 +98,7 @@ function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
             </div>
 
             {/* 전화번호 */}
-            <div className="flex items-center gap-1.5 text-gray-700">
+            <div className="flex items-center gap-1.5 text-gray-700 cursor-pointer">
               <Phone size={14} className="text-gray-400 shrink-0" />
               {pharmacy.phone ? (
                 <a
