@@ -12,23 +12,28 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
   const { favorites, toggleFavorite } = usePharmacyStore();
   const isFavorite = favorites.some((fav) => fav.id === pharmacy.id);
 
+  const isMidnight = isLateNightPharmacy(pharmacy.operatingHours);
+  const isOpen = getPharmacyStatus(pharmacy.operatingHours, isHoliday);
+  const HolidayOpen = pharmacy.operatingHours.holiday?.open ? true : false;
+
+  const today = new Date()
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toLowerCase();
+
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     toggleFavorite(pharmacy);
   };
 
-  const isMidnight = isLateNightPharmacy(pharmacy.operatingHours);
-  const isOpen = getPharmacyStatus(pharmacy.operatingHours, isHoliday);
-  const HolidayOpen = pharmacy.operatingHours.holiday?.open ? true : false;
-  const today = new Date()
-    .toLocaleDateString("en-US", { weekday: "long" })
-    .toLowerCase();
-
   return (
     <div
       onClick={onClick}
-      className={`p-4 mb-3 bg-white border rounded-xl flex flex-col transition-colors cursor-pointer
-        ${isActive ? "border-indigo-500 bg-indigo-50" : "border-gray-100"}`}
+      className={`p-4 mb-3 rounded-xl flex flex-col transition-all duration-200 cursor-pointer border
+    ${
+      isActive
+        ? "bg-indigo-50/40 border-indigo-200/60 shadow-sm -translate-y-[1px]"
+        : "bg-white border-gray-100 shadow-sm"
+    }`}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -57,12 +62,20 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
       {/* 칩 */}
       <div className="flex items-center gap-1.5 mb-3">
         <Chip label={isOpen ? "영업중" : "영업종료"} active={isOpen} />
-        {isMidnight && <Chip label="야간운영" variant="midnight" />}
-        {HolidayOpen && <Chip label="공휴일 운영" variant="holiday" />}
+        {isMidnight && (
+          <Chip label="야간운영" variant="midnight" active={isOpen} />
+        )}
+        {HolidayOpen && (
+          <Chip label="공휴일 운영" variant="holiday" active={isOpen} />
+        )}
       </div>
 
       <div className="flex flex-col gap-1.5 mb-3">
-        <div className="flex items-center gap-2 text-gray-700">
+        <div className="flex items-center gap-2 text-gray-500">
+          <MapPin size={15} className="text-gray-400 shrink-0" />
+          <span className="text-[13px] ">{pharmacy.address}</span>
+        </div>
+        <div className="flex items-center gap-2 text-gray-500">
           <Clock size={15} className="text-gray-400 shrink-0" />
           <span className="text-[13px]">
             {isOpen
@@ -70,19 +83,18 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
               : "영업종료"}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-gray-500">
-          <MapPin size={15} className="text-gray-400 shrink-0" />
-          <span className="text-[13px] leading-relaxed break-keep">
-            {pharmacy.address}
-          </span>
-        </div>
+
+        <a
+          href={`tel:${pharmacy.phone}`}
+          className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Phone size={14} className="text-gray-400" />
+          <span className="text-[13px]">{pharmacy.phone || "번호 없음"}</span>
+        </a>
       </div>
 
-      <div className="flex justify-between items-center pt-3 border-t border-gray-50">
-        <div className="flex items-center gap-2 text-gray-500">
-          <Phone size={14} className="text-gray-400" />
-          <span className="text-[12px]">{pharmacy.phone || "번호 없음"}</span>
-        </div>
+      <div className="flex justify-end items-center pt-3 border-t border-gray-100">
         <div className="flex items-center gap-0.5 text-gray-400">
           <span className="text-[11px]">상세보기</span>
           <ChevronDown size={14} />

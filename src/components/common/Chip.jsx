@@ -1,41 +1,42 @@
 import React from "react";
-import { Moon } from "lucide-react";
+import { Moon, Calendar } from "lucide-react";
 
-function Chip({ label, active = false, variant = "default", onClick }) {
+function Chip({ label, active = false, variant = "default" }) {
   // 1. 기본스타일
   const baseClass =
-    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-bold whitespace-nowrap transition-colors";
+    "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap transition-colors";
 
   // 2. 변형스타일
   const variants = {
-    // 야간운영
-    midnight: "bg-indigo-700 text-white",
-    // 영업중
-    active: "bg-[#1a1a2e] text-white",
-    // 영업종료/정보부족
-    inactive: "bg-gray-100 text-gray-500",
-    // 공휴일 운영
-    holiday: "bg-red-500 text-white",
+    midnight: "bg-indigo-50 border-indigo-100 text-indigo-600",
+    active: "bg-slate-800 border-slate-800 text-white",
+    inactive: "bg-gray-50 border-gray-200 text-gray-400 border",
+    holiday: "bg-rose-50 border-rose-100 text-rose-500",
   };
 
-  // 3. 클래스
-  const isMidnight = variant === "midnight";
-  const isHoliday = variant === "holiday";
-  const selectedClass = isMidnight
-    ? variants.midnight
-    : isHoliday
-      ? variants.holiday
-      : active
-        ? variants.active
-        : variants.inactive;
+  // 3. 색상 변형 클래스
+  const getSelectedClass = () => {
+    if (label === "영업중") return variants.active;
+    if (label === "영업종료") return variants.inactive;
+
+    // 그 외(심야, 공휴일) 칩들은 현재 영업중(active)일 때만 색깔이 나옴
+    if (!active) return variants.inactive;
+
+    if (variant === "midnight") return variants.midnight;
+    if (variant === "holiday") return variants.holiday;
+
+    return variants.inactive;
+  };
+
+  const selectedClass = getSelectedClass();
 
   return (
-    <span
-      className={`${baseClass} ${selectedClass} ${onClick ? "cursor-pointer" : ""}`}
-      onClick={onClick}
-    >
+    <span className={`${baseClass} ${selectedClass}`}>
       {/* 야간운영 아이콘 추가*/}
-      {isMidnight && <Moon size={12} className="fill-current" />}
+      {active && variant === "midnight" && (
+        <Moon size={11} className="fill-current" />
+      )}
+      {active && variant === "holiday" && <Calendar size={11} />}
       {label}
     </span>
   );

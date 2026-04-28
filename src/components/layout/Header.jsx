@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, Heart } from "lucide-react";
+import { Home, Heart } from "lucide-react";
 
 function Header() {
   return (
@@ -39,15 +39,17 @@ function Header() {
 
         {/* 2. 모바일: 아이콘 */}
         <Link
+          to="/"
+          className="md:hidden p-1 hover:bg-white/10 rounded-full transition-colors"
+        >
+          <Home className="w-5 h-5 text-gray-300" />
+        </Link>
+        <Link
           to="/favorites"
           className="md:hidden p-1 hover:bg-white/10 rounded-full transition-colors"
         >
           <Heart className="w-5 h-5 text-gray-300" />
         </Link>
-
-        <button className="md:hidden p-1 hover:bg-white/10 rounded-full transition-colors">
-          <Search className="w-5 h-5 text-gray-300" />
-        </button>
       </div>
     </nav>
   );
