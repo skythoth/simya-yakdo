@@ -163,7 +163,7 @@ const PharmacyFilter = ({ isFilter, setIsFilter, onToggle }) => {
           </div>
         </div>
 
-        {/* 영업중 필터 */}
+        {/* 영업중 필터
         <div className="relative w-full">
           <div
             className={dropdownTrigger}
@@ -202,7 +202,7 @@ const PharmacyFilter = ({ isFilter, setIsFilter, onToggle }) => {
               </li>
             </ul>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -8,7 +8,10 @@ import useCurrentLocation from "../hooks/useCurrentLocation";
 import { useGetPharmacyQuery } from "../hooks/useGetPharmacy";
 import { calculateDistance } from "../utils/distance";
 import useFilterStore from "../stores/useFilterStore";
-import { getPharmacyStatus } from "../utils/pharmacyStatus";
+import {
+  getPharmacyStatus,
+  isLateNightPharmacy,
+} from "../utils/pharmacyStatus";
 import { useGetHolidayQuery } from "../hooks/useGetHoliday";
 import MapFilterButtons from "../components/layout/MapFilterButtons";
 
@@ -18,7 +21,13 @@ function HomePage() {
   const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
   const isHoliday = useGetHolidayQuery().data;
-  const { selectedSido, selectedDistrict, openFilter } = useFilterStore();
+  const {
+    selectedSido,
+    selectedDistrict,
+    openFilter,
+    lateNightFilter,
+    holidayFilter,
+  } = useFilterStore();
 
   // TODO: useGetPharmacyQuery로 대체, 검토 필요
 
@@ -47,6 +56,14 @@ function HomePage() {
             return getPharmacyStatus(p.operatingHours, isHoliday);
         })
         .filter((p) => {
+          if (!lateNightFilter) return true;
+          return isLateNightPharmacy(p.operatingHours);
+        })
+        .filter((p) => {
+          if (!holidayFilter) return true;
+          return p.operatingHours.holiday?.open;
+        })
+        .filter((p) => {
           if (p.lat) return true;
         })
         .filter((p) => {
@@ -58,7 +75,14 @@ function HomePage() {
     } else {
       setPharmacies([]);
     }
-  }, [data, location, selectedDistrict, openFilter]);
+  }, [
+    data,
+    location,
+    selectedDistrict,
+    openFilter,
+    lateNightFilter,
+    holidayFilter,
+  ]);
 
   // useEffect(() => {
   //   if (!region) return;
