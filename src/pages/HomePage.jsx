@@ -10,6 +10,7 @@ import { calculateDistance } from "../utils/distance";
 import useFilterStore from "../stores/useFilterStore";
 import { getPharmacyStatus } from "../utils/pharmacyStatus";
 import { useGetHolidayQuery } from "../hooks/useGetHoliday";
+import MapFilterButtons from "../components/layout/MapFilterButtons";
 
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -100,6 +101,12 @@ function HomePage() {
         className={`map-section absolute top-0 right-0 z-0 items-center justify-center transition-all duration-300 ease-in-out
         ${isListOpen ? "bottom-[60dvh] left-0 md:bottom-0 md:left-[360px]" : "bottom-0 left-0"}`}
       >
+        {/* 필터링 버튼 */}
+        <div className="hidden md:block">
+          <MapFilterButtons />
+        </div>
+
+        {/* 맵 */}
         <Map
           pharmacies={pharmacies}
           onSelect={handleSelectPharmacy}

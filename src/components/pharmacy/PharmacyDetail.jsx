@@ -2,53 +2,54 @@ import React from "react";
 import { X, Navigation } from "lucide-react";
 import { formatOperatingHours } from "../../utils/pharmacyStatus";
 
-// 약국 상세 모달 - 약국 세부정보 + 길찾기 연동
 function PharmacyDetail({ pharmacy, onClose }) {
   const operatingHours = formatOperatingHours(pharmacy.operatingHours);
 
   const handleDirections = () => {
-    // TODO: 카카오맵 길찾기 URL로 이동
-    console.log("길찾기:", pharmacy.name);
+    const url = `https://map.kakao.com/link/to/${pharmacy.name},${pharmacy.lat},${pharmacy.lng}`;
+    window.open(url, "_blank");
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 rounded-md p-2  ">
-      {/* 상세타이틀 & 닫기버튼 */}
-      <div className="flex justify-between items-center px-2 border-b border-gray-200 ">
-        <h3 className="text-sm font-bold text-gray-600">운영시간</h3>
+    <div className="flex flex-col h-full bg-slate-50/50 rounded-lg border border-gray-100 overflow-hidden">
+      <div className="flex justify-between items-center px-3 py-2 border-b border-gray-200/50 bg-white/50">
+        <h3 className="text-[13px] font-bold text-slate-500">운영시간 상세</h3>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-full hover:bg-gray-200 transition-colors"
+          className="p-1 rounded-full hover:bg-gray-200 transition-colors"
         >
-          <X size={22} className="text-gray-400" />
+          <X size={18} className="text-gray-400" />
         </button>
       </div>
 
-      {/* 운영시간 리스트 */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        <ul className="space-y-3">
+      {/* 세부내용 */}
+      <div className="px-4 py-3 bg-transparent">
+        <ul className="space-y-2">
           {operatingHours.map((item, index) => (
-            <li key={index} className="flex justify-between ">
-              <span className="text-gray-600 font-medium text-[14px]">
+            <li key={index} className="flex justify-between items-center">
+              <span className="text-slate-500 font-medium text-[13px]">
                 {item.day}
               </span>
-              <span className="text-gray-900 font-semibold text-[12px]">
+              <span className="text-slate-800 font-bold text-[12px]">
                 {item.time}
               </span>
             </li>
           ))}
         </ul>
       </div>
-      {/* 안내내용 */}
-      <p className="text-[12px] text-gray-400 m-2 text-center">
-        정보가 실제와 다를 수 있으니 전화 후 방문해 주세요.
+
+      {/* 안내 */}
+      <p className="text-[11px] text-gray-400 px-4 pb-2 text-center leading-tight">
+        실제 운영 시간은 현장 상황에 따라 다를 수 있습니다.
       </p>
-      {/* 카카오맵 버튼 */}
-      <div className="px-5 py-3 bg-white">
+
+      {/* 카카오맵 */}
+      <div className="px-3 py-2 bg-slate-50/50 border-t border-gray-100">
         <button
           onClick={handleDirections}
-          className="w-full  shadow-sm bg-[#FAE100] hover:bg-[#F7E600] text-[#3c1e1e]  font-bold py-2.5 rounded-lg text-sm"
+          className="w-full flex items-center justify-center gap-2 bg-[#FAE100] active:bg-[#F7E600] text-[#3c1e1e] font-bold py-2.5 rounded-lg text-[13px] shadow-sm"
         >
+          <Navigation size={14} className="fill-current" />
           카카오맵 길찾기
         </button>
       </div>

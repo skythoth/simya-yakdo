@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
 import PharmacyListCard from "./PharmacyListCard";
 import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
-// import { useGetPharmacyQuery } from "../../hooks/useGetPharmacy";
-import LoadingSpinner from "../common/LoadingSpinner";
 import PharmacyToggle from "./PharmacyToggle";
-import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
-import { ADMINISTRATIVE_DISTRICTS } from "../../constants/filterOptions";
-import useFilterStore from "../../stores/useFilterStore";
+import PharmacyFilter from "./PharmacyFilter";
 
 const PharmacyList = ({
   pharmacies = [],
@@ -19,26 +14,10 @@ const PharmacyList = ({
   isHoliday,
 }) => {
   const [openId, setOpenId] = useState(null);
-
-  const {
-    selectedSido,
-    setSelectedSido,
-    selectedDistrict,
-    setSelectedDistrict,
-    openFilter,
-    setOpenFilter,
-  } = useFilterStore();
-
-  const districtOptions = ADMINISTRATIVE_DISTRICTS[selectedSido] ?? [];
-
-  const handleCardClick = (pharmacy) => {
-    setOpenId(openId === pharmacy.id ? null : pharmacy.id);
-    onSelect(pharmacy);
-  };
-
+  const [isFilter, setIsFilter] = useState(true);
   const cardRefs = useRef({});
 
-  // 선택된 약국으로 자동 스크롤 (이전 상세정보 닫힘 애니메이션 후)
+  // 선택된 약국으로 스크롤 이동
   useEffect(() => {
     if (selectedPharmacy && cardRefs.current[selectedPharmacy.id]) {
       const timer = setTimeout(() => {
@@ -51,7 +30,6 @@ const PharmacyList = ({
     }
   }, [selectedPharmacy]);
 
-  // style components
   const sideBar = `w-full md:w-[360px] 
   h-[60dvh] md:h-full z-50 bg-white 
   absolute bottom-0 left-0 md:top-0 
@@ -59,67 +37,19 @@ const PharmacyList = ({
   pb-[env(safe-area-inset-bottom)]
   ${isOpen ? "translate-x-0" : "-translate-x-full"}`;
 
-  // if (isLoading) return <LoadingSpinner />;
   return (
     <div className="absolute left-0 top-0 w-full h-full overflow-hidden z-50 pointer-events-none">
-      {/*  1. 사이드바  */}
-      <section className={sideBar}>
+      <section className={sideBar} onClick={(e) => e.stopPropagation()}>
         <div className="h-full flex flex-col relative overflow-hidden">
-          <div className="relative z-30 p-4 border-b bg-white shrink-0 flex justify-between items-center">
-            <h2 className="text-xl font-bold">약국 목록</h2>
-            <button
-              onClick={() => onToggle(false)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-full"
-            >
-              <X size={24} className="text-gray-600" />
-            </button>
-          </div>
-          {/* 임시 필터 */}
-          <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 mt-2">
-            <select
-              value={selectedSido}
-              onChange={(event) => {
-                const nextSido = event.target.value;
-                setSelectedSido(nextSido);
-                setSelectedDistrict(
-                  (ADMINISTRATIVE_DISTRICTS[nextSido] ?? [""])[0] ?? "",
-                );
-              }}
-              className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
-            >
-              <option value="">내 위치</option>
-              {Object.keys(ADMINISTRATIVE_DISTRICTS).map((sido) => (
-                <option key={sido} value={sido}>
-                  {sido}
-                </option>
-              ))}
-            </select>
-            {selectedSido && (
-              <select
-                value={selectedDistrict}
-                onChange={(event) => setSelectedDistrict(event.target.value)}
-                className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
-              >
-                {districtOptions.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
-                  </option>
-                ))}
-              </select>
-            )}
-            <select
-              value={openFilter}
-              onChange={(event) => setOpenFilter(event.target.value)}
-              className="rounded-full border border-gray-300 px-3 py-2 text-xs text-gray-700 outline-none"
-              aria-label="영업시간"
-            >
-              <option value={""}>전체</option>
-              <option value={"영업중"}>영업중</option>
-            </select>
-          </div>
-          <div className="mb-2"></div>
-          {/* 약국리스트 보이기 */}
-          <div className="flex-1 relative  z-10 overflow-y-auto space-y-2 custom-scrollbar p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] ">
+          {/* 1. 헤더 및 필터 컴포넌트로 교체 */}
+          <PharmacyFilter
+            isFilter={isFilter}
+            setIsFilter={setIsFilter}
+            onToggle={onToggle}
+          />
+
+          {/* 2. 약국 리스트 영역 */}
+          <div className="flex-1 relative z-10 overflow-y-auto space-y-2 custom-scrollbar p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] ">
             {!pharmacies || pharmacies.length === 0 ? (
               <EmptyState message="주변 약국 정보가 없습니다." />
             ) : (
@@ -131,8 +61,12 @@ const PharmacyList = ({
                 >
                   <PharmacyListCard
                     pharmacy={pharmacy}
-                    onClick={() => handleCardClick(pharmacy)}
-                    isActive={selectedPharmacy?.id === pharmacy.id}
+                    onSelect={onSelect}
+                    onToggleDetail={() =>
+                      setOpenId(openId === pharmacy.id ? null : pharmacy.id)
+                    }
+                    isActive={openId === pharmacy.id}
+                    isSelected={selectedPharmacy?.id === pharmacy.id}
                     isHoliday={isHoliday}
                   />
                   <div
@@ -151,7 +85,7 @@ const PharmacyList = ({
         </div>
       </section>
 
-      {/*  2. 토글버튼  */}
+      {/* 3. 토글 버튼 */}
       <div
         className={`transition-all duration-100 
           ${
