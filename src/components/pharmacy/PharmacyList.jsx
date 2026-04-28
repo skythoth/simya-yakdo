@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
+<<<<<<< HEAD
 
+=======
+>>>>>>> temp
 import { X, ChevronDown } from "lucide-react";
 import PharmacyListCard from "./PharmacyListCard";
 import PharmacyDetail from "./PharmacyDetail";
 import EmptyState from "../common/EmptyState";
 import PharmacyToggle from "./PharmacyToggle";
-import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
 import { ADMINISTRATIVE_DISTRICTS } from "../../constants/filterOptions";
 import useFilterStore from "../../stores/useFilterStore";
 

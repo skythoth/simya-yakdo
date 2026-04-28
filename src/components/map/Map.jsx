@@ -1,20 +1,32 @@
 import React from "react";
-import {useEffect, useRef, useState} from "react";
-import { Map as KakaoMap, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
+import { useEffect, useRef, useState } from "react";
+import {
+  Map as KakaoMap,
+  MapMarker,
+  MarkerClusterer,
+} from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { getPharmacyStatus } from "../../utils/pharmacyStatus";
 import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
+import useFilterStore from "../../stores/useFilterStore";
+import useCurrentLocation from "../../hooks/useCurrentLocation";
 
 const CLOSED_MARKER_SRC = `data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="29" height="42" viewBox="0 0 29 42">
     <path d="M14.5 0C6.5 0 0 6.5 0 14.5C0 25.3 14.5 42 14.5 42S29 25.3 29 14.5C29 6.5 22.5 0 14.5 0Z" fill="#9E9E9E"/>
     <circle cx="14.5" cy="14.5" r="5.5" fill="white"/>
-  </svg>`
+  </svg>`,
 )}`;
 
-const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen }) => {
-  useKakaoLoader()
+const Map = ({
+  pharmacies = [],
+  onSelect,
+  selectedPharmacy,
+  location,
+  isListOpen,
+}) => {
+  useKakaoLoader();
   const isHoliday = useGetHolidayQuery().data;
   const mapRef = useRef(null);
   const [center, setCenter] = useState(null);
@@ -22,11 +34,11 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen
 
   useEffect(() => {
     setPositions(pharmacies);
-  },[pharmacies])
+  }, [pharmacies]);
 
-  // 최초: 현재 위치로 중심 설정                                            
-  useEffect(() => {                                                         
-    if (location) {                                              
+  // 최초: 현재 위치로 중심 설정
+  useEffect(() => {
+    if (location) {
       setCenter({ lat: location.lat, lng: location.lng });
     }
   }, [location]);
@@ -41,14 +53,56 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen
 
   // 약국 클릭 : 해당 좌표로 중심 이동
   useEffect(() => {
-    if(selectedPharmacy) {
+    if (selectedPharmacy) {
       setCenter({ lat: selectedPharmacy.lat, lng: selectedPharmacy.lng });
       console.log("지도 이동:", selectedPharmacy.lat, selectedPharmacy.lng);
     }
-  },[selectedPharmacy])
+  }, [selectedPharmacy]);
+
+  // 지역 선택 : 해당 좌표로 중심 이동
+  const { selectedSido, selectedDistrict } = useFilterStore();
+  useEffect(() => {
+    if (selectedDistrict) {
+      const regionQuery = [selectedSido, selectedDistrict]
+        .filter(Boolean)
+        .join(" ");
+
+      if (!regionQuery || !window.kakao?.maps?.services) {
+        return;
+      }
+
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      let isCancelled = false;
+
+      geocoder.addressSearch(regionQuery, (result, status) => {
+        if (
+          isCancelled ||
+          status !== window.kakao.maps.services.Status.OK ||
+          !result?.[0]
+        ) {
+          return;
+        }
+
+        setCenter({
+          lat: Number(result[0].y),
+          lng: Number(result[0].x),
+        });
+      });
+
+      return () => {
+        isCancelled = true;
+      };
+    } else {
+      setCenter({ lat: location.lat, lng: location.lng });
+    }
+  }, [selectedDistrict]);
 
   if (!center) {
-      return <div><LoadingSpinner /></div>;
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
@@ -68,7 +122,10 @@ const Map = ({ pharmacies = [], onSelect, selectedPharmacy, location, isListOpen
             minLevel={6} // 클러스터 할 최소 지도 레벨
           >
             {pharmacies.map((pharmacy) => {
-              const isOpen = getPharmacyStatus(pharmacy.operatingHours, isHoliday);
+              const isOpen = getPharmacyStatus(
+                pharmacy.operatingHours,
+                isHoliday,
+              );
               return (
                 <MapMarker
                   key={pharmacy.id}
