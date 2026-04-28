@@ -1,5 +1,12 @@
 import React from "react";
-import { Heart, MapPin, Phone, ChevronDown, Clock } from "lucide-react";
+import {
+  Heart,
+  MapPin,
+  Phone,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+} from "lucide-react";
 import Chip from "../common/Chip";
 import usePharmacyStore from "../../stores/usePharmacyStore";
 import {
@@ -8,7 +15,14 @@ import {
 } from "../../utils/pharmacyStatus";
 import { formatDistance } from "../../utils/distance";
 
-function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
+function PharmacyListCard({
+  pharmacy,
+  onSelect,
+  onToggleDetail,
+  isActive,
+  isSelected,
+  isHoliday,
+}) {
   const { favorites, toggleFavorite } = usePharmacyStore();
   const isFavorite = favorites.some((fav) => fav.id === pharmacy.id);
 
@@ -20,6 +34,7 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
     .toLocaleDateString("en-US", { weekday: "long" })
     .toLowerCase();
 
+  // 즐겨찾기 버튼
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     toggleFavorite(pharmacy);
@@ -27,12 +42,12 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
 
   return (
     <div
-      onClick={onClick}
+      onClick={() => onSelect(pharmacy)}
       className={`p-4 mb-3 rounded-xl flex flex-col transition-all duration-200 cursor-pointer border
     ${
-      isActive
+      isSelected || isActive
         ? "bg-indigo-50/40 border-indigo-200/60 shadow-sm -translate-y-[1px]"
-        : "bg-white border-gray-100 shadow-sm"
+        : "bg-white border-gray-100 shadow-sm hover:border-gray-200"
     }`}
     >
       <div className="flex justify-between items-start mb-2">
@@ -107,13 +122,20 @@ function PharmacyListCard({ pharmacy, onClick, isActive, isHoliday }) {
         </div>
       </div>
 
-      <div className="flex justify-end items-center pt-3 border-t border-gray-100 mt-3">
-        <div className="flex items-center gap-0.5 text-gray-400">
-          <span className="text-[11px]">상세보기</span>
-          <ChevronDown
-            size={14}
-            className={`transition-transform duration-200 ${isActive ? "rotate-180" : ""}`}
-          />
+      {/* 상세보기 토글 */}
+
+      <div
+        className="flex justify-end items-center pt-3 border-t border-gray-100 mt-3 cursor-pointer group/btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleDetail(pharmacy);
+        }}
+      >
+        <div className="flex items-center gap-0.5 text-gray-400 group-hover/btn:text-indigo-500 transition-colors">
+          <span className="text-[11px] font-medium">
+            {isActive ? "접기" : "상세보기"}
+          </span>
+          {isActive ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </div>
       </div>
     </div>

@@ -118,10 +118,10 @@ const PharmacyList = ({
 
             {/* 필터 드롭다운 */}
             <div
-              className={`flex flex-col gap-3 transition-all duration-300 ease-in-out overflow-hidden ${
+              className={`flex flex-col gap-3 transition-all duration-300 ease-in-out ${
                 isFilter
-                  ? "max-h-[300px] opacity-100"
-                  : "max-h-0 opacity-0 pointer-events-none"
+                  ? "max-h-[300px] opacity-100 overflow-visible" // 👈 열렸을 때는 overflow-visible로 변경
+                  : "max-h-0 opacity-0 overflow-hidden pointer-events-none" // 👈 닫혔을 때만 hidden
               }`}
             >
               <div className="flex gap-2">
@@ -257,8 +257,12 @@ const PharmacyList = ({
                 >
                   <PharmacyListCard
                     pharmacy={pharmacy}
-                    onClick={() => handleCardClick(pharmacy)}
-                    isActive={selectedPharmacy?.id === pharmacy.id}
+                    onSelect={onSelect}
+                    onToggleDetail={() =>
+                      setOpenId(openId === pharmacy.id ? null : pharmacy.id)
+                    }
+                    isActive={openId === pharmacy.id}
+                    isSelected={selectedPharmacy?.id === pharmacy.id}
                     isHoliday={isHoliday}
                   />
                   <div
