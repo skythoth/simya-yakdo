@@ -40,7 +40,7 @@ function PharmacyDetail({ pharmacy, onClose }) {
 
       {/* 안내 */}
       <p className="text-[11px] text-gray-400 px-4 pb-2 text-center leading-tight">
-        현장 상황에 따라 다를 수 있으니 전화 후 방문을 권장합니다.
+        실제 운영 시간은 현장 상황에 따라 다를 수 있습니다.
       </p>
 
       {/* 카카오맵 */}

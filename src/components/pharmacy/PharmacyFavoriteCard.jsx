@@ -97,11 +97,20 @@ function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
             {/* 전화번호 */}
             <div className="flex items-center gap-1.5 text-gray-700">
               <Phone size={14} className="text-gray-400 shrink-0" />
-              <span className="text-[13px] font-medium">
-                {pharmacy.phone || "번호 없음"}
-              </span>
+              {pharmacy.phone ? (
+                <a
+                  href={`tel:${pharmacy.phone}`}
+                  className="text-[13px] font-medium hover:text-indigo-600 transition-colors cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {pharmacy.phone}
+                </a>
+              ) : (
+                <span className="text-[13px] font-medium text-gray-400">
+                  번호 없음
+                </span>
+              )}
             </div>
-
             {/* 지도 */}
             <div className="hidden md:flex flex-col flex-1 mt-1">
               <div className="flex-1 min-h-[160px] bg-gray-50 rounded-xl overflow-hidden border border-gray-200">
