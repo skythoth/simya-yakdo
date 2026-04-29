@@ -19,7 +19,7 @@ import {
 import usePharmacyStore from "../../stores/usePharmacyStore";
 
 function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
-  const { toggleFavorite } = usePharmacyStore();
+  const { toggleFavorite, updateFavoriteMemo } = usePharmacyStore();
   const [isExpanded, setIsExpended] = useState(false);
   // 날짜
   const today = new Date()
@@ -40,6 +40,10 @@ function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
   const handleDirections = () => {
     const url = `https://map.kakao.com/link/to/${pharmacy.name},${pharmacy.lat},${pharmacy.lng}`;
     window.open(url, "_blank");
+  };
+
+  const handleMemoChange = (e) => {
+    updateFavoriteMemo(pharmacy.id, e.target.value);
   };
 
   return (
@@ -185,6 +189,8 @@ function PharmacyFavoriteCard({ pharmacy, isHoliday }) {
         <input
           type="text"
           placeholder="메모를 입력하세요"
+          value={pharmacy.memo ?? ""}
+          onChange={handleMemoChange}
           className="bg-transparent border-none outline-none text-[13px] w-full text-gray-600 placeholder:text-gray-400"
         />
       </div>
