@@ -21,7 +21,7 @@ const createMarkerSvg = (fillColor) =>
     </svg>`,
   )}`;
 
-const OPEN_MARKER_SRC = createMarkerSvg("#E74C3C");
+const OPEN_MARKER_SRC = createMarkerSvg("#537dcb");
 const CLOSED_MARKER_SRC = createMarkerSvg("#9E9E9E");
 
 const Map = ({
