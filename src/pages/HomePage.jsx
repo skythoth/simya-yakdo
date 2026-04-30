@@ -14,6 +14,8 @@ import {
 } from "../utils/pharmacyStatus";
 import { useGetHolidayQuery } from "../hooks/useGetHoliday";
 import MapFilterButtons from "../components/layout/MapFilterButtons";
+import CurrentLocationButton from "../components/common/CurrentLocationButton";
+import SearchMapButton from "../components/common/SearchMapButton";
 
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -129,6 +131,12 @@ function HomePage() {
         {/* 필터링 버튼 */}
         <div className="absolute top-2 inset-x-0 z-[40] flex justify-center px-4 md:top-6 md:right-4 md:left-auto md:inset-x-auto md:w-auto md:justify-end">
           <MapFilterButtons />
+        </div>
+
+        {/* 현재위치 및 내 위치 찾기 버튼 */}
+        <div>
+          <SearchMapButton />
+          <CurrentLocationButton />
         </div>
 
         {/* 맵 */}
