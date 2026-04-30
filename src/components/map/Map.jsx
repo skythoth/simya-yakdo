@@ -51,13 +51,36 @@ const Map = ({
     }
   }, [location]);
 
-  // 리스트 열림/닫힘 시 지도 relayout
+  // 리스트 열림/닫힘 시 지도 relayout 후 선택된 약국 재중심
   useEffect(() => {
     const timer = setTimeout(() => {
       mapRef.current?.relayout();
+      if (selectedPharmacy) {
+        const latOffset = isListOpen ? 0.0002 : 0;
+        setCenter({
+          lat: selectedPharmacy.lat + latOffset,
+          lng: selectedPharmacy.lng,
+        });
+      }
     }, 310);
     return () => clearTimeout(timer);
   }, [isListOpen]);
+
+  // 뷰포트 리사이즈 시 지도 relayout (모바일↔PC 전환 대응)
+  useEffect(() => {
+    let timer;
+    const handleResize = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        mapRef.current?.relayout();
+      }, 300);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timer);
+    };
+  }, []);
 
   // 약국 클릭 : 해당 좌표로 중심 이동
   // 리스트가 열려있으면 마커가 지도 하단에 보이도록 중심을 북쪽으로 오프셋
@@ -69,7 +92,7 @@ const Map = ({
         lng: selectedPharmacy.lng,
       });
     }
-  }, [selectedPharmacy, isListOpen]);
+  }, [selectedPharmacy]);
 
   // 지역 선택 : 해당 좌표로 중심 이동
   const { selectedSido, selectedDistrict } = useFilterStore();
@@ -137,6 +160,17 @@ const Map = ({
                   mapRef.current.panTo(moveLatLng);
                 }
               },
+              searchInCurrentArea: () => {
+                var bounds = mapRef.current.getBounds()
+                var sw = bounds.getSouthWest()  // 영역정보의 남서쪽 정보
+                var ne = bounds.getNorthEast()  // 영역정보의 북동쪽 정보
+                console.log('남서쪽 위도, 경도 : ' + sw.toString() + '북동쪽 위도, 경도 : ' + ne.toString())
+
+                return {
+                  sw: { lat: sw.getLat(), lng: sw.getLng() },
+                  ne: { lat: ne.getLat(), lng: ne.getLng() },
+                }
+              }
             });
           }}
         >
