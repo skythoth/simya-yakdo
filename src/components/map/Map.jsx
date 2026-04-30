@@ -12,12 +12,16 @@ import { useGetHolidayQuery } from "../../hooks/useGetHoliday";
 import useFilterStore from "../../stores/useFilterStore";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
 
-const CLOSED_MARKER_SRC = `data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="29" height="42" viewBox="0 0 29 42">
-    <path d="M14.5 0C6.5 0 0 6.5 0 14.5C0 25.3 14.5 42 14.5 42S29 25.3 29 14.5C29 6.5 22.5 0 14.5 0Z" fill="#9E9E9E"/>
-    <circle cx="14.5" cy="14.5" r="5.5" fill="white"/>
-  </svg>`,
-)}`;
+const createMarkerSvg = (fillColor) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="33" height="44" viewBox="0 0 33 44">
+      <path d="M16.5 1C8 1 1 8 1 16.5C1 27.4 16.5 43 16.5 43S32 27.4 32 16.5C32 8 25 1 16.5 1Z" fill="${fillColor}" stroke="white" stroke-width="1.5"/>
+      <circle cx="16.5" cy="16.5" r="5.5" fill="white"/>
+    </svg>`,
+  )}`;
+
+const OPEN_MARKER_SRC = createMarkerSvg("#E74C3C");
+const CLOSED_MARKER_SRC = createMarkerSvg("#9E9E9E");
 
 const Map = ({
   pharmacies = [],
@@ -25,6 +29,7 @@ const Map = ({
   selectedPharmacy,
   location,
   isListOpen,
+  onMapReady,
 }) => {
   useKakaoLoader();
   const isHoliday = useGetHolidayQuery().data;
@@ -115,7 +120,16 @@ const Map = ({
           isPanto={true}
           style={{ width: "100%", height: "100%" }}
           level={3} // 지도의 확대 레벨
-          onCreate={(map) => (mapRef.current = map)}
+          onCreate={(map) => {
+            mapRef.current = map;
+            onMapReady?.({
+              goToCurrentLocation: () => {
+                if (location) {
+                  setCenter({ lat: location.lat, lng: location.lng });
+                }
+              },
+            });
+          }}
         >
           <MarkerClusterer
             averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
@@ -131,13 +145,18 @@ const Map = ({
                   key={pharmacy.id}
                   position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
                   onClick={() => onSelect(pharmacy)}
-                  {...(!isOpen && {
-                    image: {
-                      src: CLOSED_MARKER_SRC,
-                      size: { width: 29, height: 42 },
-                    },
-                  })}
-                />
+                  image={{
+                    src: isOpen ? OPEN_MARKER_SRC : CLOSED_MARKER_SRC,
+                    size: { width: 33, height: 44 },
+                  }}
+                  clickable={true}
+                >
+                  {selectedPharmacy?.id === pharmacy.id && (
+                    <div style={{ padding: "5px", color: "#000", fontSize: "14px", fontWeight: "bold", whiteSpace: "nowrap" }}>
+                      {pharmacy.name}
+                    </div>
+                  )}
+                </MapMarker>
               );
             })}
           </MarkerClusterer>

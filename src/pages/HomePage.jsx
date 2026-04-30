@@ -1,5 +1,5 @@
 // 메인 페이지 - 지도 + 약국 리스트 조합
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map from "../components/map/Map";
 import PharmacyList from "../components/pharmacy/PharmacyList";
 // import PharmacyDetailModal from "../components/pharmacy/PharmacyDetailModal";
@@ -20,6 +20,7 @@ function HomePage() {
   const { location, region } = useCurrentLocation();
   const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
+  const mapActionsRef = useRef(null);
   const isHoliday = useGetHolidayQuery().data;
   const {
     selectedSido,
@@ -137,6 +138,7 @@ function HomePage() {
           selectedPharmacy={selectedPharmacy}
           location={location}
           isListOpen={isListOpen}
+          onMapReady={(actions) => (mapActionsRef.current = actions)}
         />
       </section>
 
