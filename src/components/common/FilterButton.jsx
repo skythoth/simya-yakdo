@@ -30,8 +30,8 @@ function FilterButton({ label, icon: Icon, active, onClick, activeColor }) {
       onClick={onClick}
       className={`
         flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200
-        border shadow-sm pointer-events-auto
-        hover:shadow-md hover:-translate-y-0.5
+        border shadow-sm pointer-events-auto hover:shadow-md hover:-translate-y-0.5
+        gap-1 md:gap-2 px-2.5 py-1 md:px-4 md:py-2 rounded-full
         ${
           active
             ? `${currentTheme.active} shadow-sky-200`
@@ -42,7 +42,7 @@ function FilterButton({ label, icon: Icon, active, onClick, activeColor }) {
       {/* 아이콘 */}
       {Icon && (
         <Icon
-          size={16}
+          size={window.innerWidth < 768 ? 14 : 16}
           className={`transition-colors ${
             active ? currentTheme.iconActive : currentTheme.iconInactive
           }`}
@@ -50,7 +50,9 @@ function FilterButton({ label, icon: Icon, active, onClick, activeColor }) {
       )}
 
       {/* 글자 */}
-      <span className={`text-[13px] font-bold whitespace-nowrap`}>{label}</span>
+      <span className="text-[11px] md:text-[13px] font-bold whitespace-nowrap">
+        {label}
+      </span>
     </button>
   );
 }

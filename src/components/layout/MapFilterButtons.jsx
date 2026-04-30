@@ -14,8 +14,8 @@ const MapFilterButtons = () => {
   } = useFilterStore();
 
   return (
-    // 📍 flex-row로 변경하여 가로 일렬 배치, items-center로 정렬
-    <div className="absolute top-4 right-4 z-[40] flex flex-row gap-2 items-center pointer-events-none">
+    // 가로정렬
+    <div className="flex flex-row gap-1.5 md:gap-2 items-center pointer-events-none">
       {/* 1. 영업중 필터 */}
       <FilterButton
         label="영업중"

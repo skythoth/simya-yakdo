@@ -126,7 +126,7 @@ function HomePage() {
         ${isListOpen ? "bottom-[60dvh] left-0 md:bottom-0 md:left-[360px]" : "bottom-0 left-0"}`}
       >
         {/* 필터링 버튼 */}
-        <div className="hidden md:block">
+        <div className="absolute top-2 inset-x-0 z-[40] flex justify-center px-4 md:top-6 md:right-4 md:left-auto md:inset-x-auto md:w-auto md:justify-end">
           <MapFilterButtons />
         </div>
 
