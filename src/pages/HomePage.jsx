@@ -136,7 +136,7 @@ function HomePage() {
         {/* 현재위치 및 내 위치 찾기 버튼 */}
         <div>
           <SearchMapButton />
-          <CurrentLocationButton />
+          <CurrentLocationButton onClick={() => mapActionsRef.current?.goToCurrentLocation()}/>
         </div>
 
         {/* 맵 */}

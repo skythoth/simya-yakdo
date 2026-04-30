@@ -35,6 +35,7 @@ const Map = ({
   useKakaoLoader();
   const isHoliday = useGetHolidayQuery().data;
   const mapRef = useRef(null);
+  const locationRef = useRef(location);
   const [center, setCenter] = useState(null);
   const [positions, setPositions] = useState([]);
 
@@ -45,6 +46,7 @@ const Map = ({
   // 최초: 현재 위치로 중심 설정
   useEffect(() => {
     if (location) {
+      locationRef.current = location;
       setCenter({ lat: location.lat, lng: location.lng });
     }
   }, [location]);
@@ -125,8 +127,10 @@ const Map = ({
             mapRef.current = map;
             onMapReady?.({
               goToCurrentLocation: () => {
-                if (location) {
-                  setCenter({ lat: location.lat, lng: location.lng });
+                const loc = locationRef.current;
+                if (loc && mapRef.current) {
+                  const moveLatLng = new window.kakao.maps.LatLng(loc.lat, loc.lng);
+                  mapRef.current.panTo(moveLatLng);
                 }
               },
             });
@@ -149,14 +153,18 @@ const Map = ({
                     onClick={() => onSelect(pharmacy)}
                     image={{
                       src: isOpen ? OPEN_MARKER_SRC : CLOSED_MARKER_SRC,
-                      size: { width: 33, height: 44 },
+                      size: isSelected
+                        ? { width: 33, height: 44 }
+                        : { width: 22, height: 29 },
                     }}
+                    zIndex={isSelected ? 10 : 1}
                     clickable={true}
                   />
                   {isSelected && (
                     <CustomOverlayMap
                       position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
                       yAnchor={2.6}
+                      zIndex={20}
                     >
                       <div className="marker-overlay">
                         <span>{pharmacy.name}</span>
