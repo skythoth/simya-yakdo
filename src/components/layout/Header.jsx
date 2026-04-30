@@ -3,7 +3,7 @@ import { Home, Heart } from "lucide-react";
 
 function Header() {
   return (
-    <nav className="flex sticky top-0 z-50 h-12 items-center justify-between px-4 md:px-8 py-2 border-b border-gray-700 bg-[#1a1a2e] text-white">
+    <nav className="flex sticky top-0 z-50 h-12 shrink-0 items-center justify-between px-4 md:px-8 py-2 border-b border-gray-700 bg-[#1a1a2e] text-white">
       {/* 왼쪽 로고 */}
       <div className="flex items-center">
         <Link
