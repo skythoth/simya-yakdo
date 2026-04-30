@@ -60,12 +60,16 @@ const Map = ({
   }, [isListOpen]);
 
   // 약국 클릭 : 해당 좌표로 중심 이동
+  // 리스트가 열려있으면 마커가 지도 하단에 보이도록 중심을 북쪽으로 오프셋
   useEffect(() => {
     if (selectedPharmacy) {
-      setCenter({ lat: selectedPharmacy.lat, lng: selectedPharmacy.lng });
-      console.log("지도 이동:", selectedPharmacy.lat, selectedPharmacy.lng);
+      const latOffset = isListOpen ? 0.0002 : 0;
+      setCenter({
+        lat: selectedPharmacy.lat + latOffset,
+        lng: selectedPharmacy.lng,
+      });
     }
-  }, [selectedPharmacy]);
+  }, [selectedPharmacy, isListOpen]);
 
   // 지역 선택 : 해당 좌표로 중심 이동
   const { selectedSido, selectedDistrict } = useFilterStore();
