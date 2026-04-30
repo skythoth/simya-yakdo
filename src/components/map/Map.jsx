@@ -4,6 +4,7 @@ import {
   Map as KakaoMap,
   MapMarker,
   MarkerClusterer,
+  CustomOverlayMap,
 } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../hooks/useKakaoLoader";
 import LoadingSpinner from "../common/LoadingSpinner";
@@ -140,23 +141,30 @@ const Map = ({
                 pharmacy.operatingHours,
                 isHoliday,
               );
+              const isSelected = selectedPharmacy?.id === pharmacy.id;
               return (
-                <MapMarker
-                  key={pharmacy.id}
-                  position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
-                  onClick={() => onSelect(pharmacy)}
-                  image={{
-                    src: isOpen ? OPEN_MARKER_SRC : CLOSED_MARKER_SRC,
-                    size: { width: 33, height: 44 },
-                  }}
-                  clickable={true}
-                >
-                  {selectedPharmacy?.id === pharmacy.id && (
-                    <div style={{ padding: "5px", color: "#000", fontSize: "14px", fontWeight: "bold", whiteSpace: "nowrap" }}>
-                      {pharmacy.name}
-                    </div>
+                <React.Fragment key={pharmacy.id}>
+                  <MapMarker
+                    position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
+                    onClick={() => onSelect(pharmacy)}
+                    image={{
+                      src: isOpen ? OPEN_MARKER_SRC : CLOSED_MARKER_SRC,
+                      size: { width: 33, height: 44 },
+                    }}
+                    clickable={true}
+                  />
+                  {isSelected && (
+                    <CustomOverlayMap
+                      position={{ lat: pharmacy.lat, lng: pharmacy.lng }}
+                      yAnchor={2.6}
+                    >
+                      <div className="marker-overlay">
+                        <span>{pharmacy.name}</span>
+                        <div className="marker-overlay-arrow" />
+                      </div>
+                    </CustomOverlayMap>
                   )}
-                </MapMarker>
+                </React.Fragment>
               );
             })}
           </MarkerClusterer>
