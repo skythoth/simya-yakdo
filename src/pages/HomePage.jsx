@@ -20,7 +20,7 @@ import SearchMapButton from "../components/common/SearchMapButton";
 function HomePage() {
   const [pharmacies, setPharmacies] = useState([]);
   const { location, region } = useCurrentLocation();
-  const [ mapBounds, setMapBounds ] = useState(null);
+  const [mapBounds, setMapBounds] = useState(null);
   const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
   const mapActionsRef = useRef(null);
@@ -47,8 +47,12 @@ function HomePage() {
         .filter((p) => {
           if (mapBounds) {
             // bounds 안에 있는지 체크
-            return p.lat >= mapBounds.sw.lat && p.lat <= mapBounds.ne.lat
-                && p.lng >= mapBounds.sw.lng && p.lng <= mapBounds.ne.lng;
+            return (
+              p.lat >= mapBounds.sw.lat &&
+              p.lat <= mapBounds.ne.lat &&
+              p.lng >= mapBounds.sw.lng &&
+              p.lng <= mapBounds.ne.lng
+            );
           }
           if (selectedDistrict) return true;
           else return p.distance <= 2000;
@@ -87,6 +91,7 @@ function HomePage() {
   }, [
     data,
     location,
+    selectedSido,
     selectedDistrict,
     openFilter,
     lateNightFilter,
@@ -142,14 +147,18 @@ function HomePage() {
 
         {/* 현재위치 및 내 위치 찾기 버튼 */}
         <div>
-          <SearchMapButton onClick={() => {
-            const bounds = mapActionsRef.current?.searchInCurrentArea();
-            setMapBounds(bounds);
-          }} />
-          <CurrentLocationButton onClick={() => {
-            mapActionsRef.current?.goToCurrentLocation();
-            setMapBounds(null);  // 거리 기반 필터로 복귀
-          }} />
+          <SearchMapButton
+            onClick={() => {
+              const bounds = mapActionsRef.current?.searchInCurrentArea();
+              setMapBounds(bounds);
+            }}
+          />
+          <CurrentLocationButton
+            onClick={() => {
+              mapActionsRef.current?.goToCurrentLocation();
+              setMapBounds(null); // 거리 기반 필터로 복귀
+            }}
+          />
         </div>
 
         {/* 맵 */}
