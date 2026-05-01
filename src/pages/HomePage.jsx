@@ -27,7 +27,9 @@ function HomePage() {
   const isHoliday = useGetHolidayQuery().data;
   const {
     selectedSido,
+    setSelectedSido,
     selectedDistrict,
+    setSelectedDistrict,
     openFilter,
     lateNightFilter,
     holidayFilter,
@@ -82,7 +84,16 @@ function HomePage() {
         .filter((p) => {
           if (p.lng) return true;
         })
-        .sort((a, b) => a.distance - b.distance);
+        .sort((a, b) => a.distance - b.distance)
+        .sort((a, b) => {
+          const aIsOpen = Number(
+            getPharmacyStatus(a.operatingHours, isHoliday),
+          );
+          const bIsOpen = Number(
+            getPharmacyStatus(b.operatingHours, isHoliday),
+          );
+          return bIsOpen - aIsOpen;
+        });
       console.log("가까운 약국:", withDistance.length, "개");
       setPharmacies(withDistance);
     } else {
@@ -91,7 +102,6 @@ function HomePage() {
   }, [
     data,
     location,
-    selectedSido,
     selectedDistrict,
     openFilter,
     lateNightFilter,
@@ -151,6 +161,8 @@ function HomePage() {
             onClick={() => {
               const bounds = mapActionsRef.current?.searchInCurrentArea();
               setMapBounds(bounds);
+              setSelectedSido("");
+              setSelectedDistrict("");
             }}
           />
           <CurrentLocationButton
@@ -183,6 +195,7 @@ function HomePage() {
           isOpen={isListOpen}
           isHoliday={isHoliday}
           onToggle={setIsListOpen}
+          setMapBounds={setMapBounds}
         />
       )}
 

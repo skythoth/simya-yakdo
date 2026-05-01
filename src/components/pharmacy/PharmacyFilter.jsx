@@ -3,7 +3,7 @@ import { X, ChevronDown } from "lucide-react";
 import { ADMINISTRATIVE_DISTRICTS } from "../../constants/filterOptions";
 import useFilterStore from "../../stores/useFilterStore";
 
-const PharmacyFilter = ({ isFilter, setIsFilter, onToggle }) => {
+const PharmacyFilter = ({ isFilter, setIsFilter, onToggle, setMapBounds }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const {
@@ -23,12 +23,14 @@ const PharmacyFilter = ({ isFilter, setIsFilter, onToggle }) => {
     const defaultDistrict = (ADMINISTRATIVE_DISTRICTS[value] ?? [""])[0] ?? "";
     setSelectedDistrict(defaultDistrict);
     setActiveDropdown(null);
+    setMapBounds(null);
   };
 
   // 구/군 변경 핸들러
   const handleDistrictChange = (value) => {
     setSelectedDistrict(value);
     setActiveDropdown(null);
+    setMapBounds(null);
   };
 
   // 바깥 클릭 시 드롭다운 닫기

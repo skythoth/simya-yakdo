@@ -12,6 +12,7 @@ const PharmacyList = ({
   isOpen,
   onToggle,
   isHoliday,
+  setMapBounds,
 }) => {
   const [openId, setOpenId] = useState(null);
   const [isFilter, setIsFilter] = useState(true);
@@ -46,6 +47,7 @@ const PharmacyList = ({
             isFilter={isFilter}
             setIsFilter={setIsFilter}
             onToggle={onToggle}
+            setMapBounds={setMapBounds}
           />
 
           {/* 2. 약국 리스트 영역 */}

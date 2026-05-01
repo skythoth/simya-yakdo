@@ -127,8 +127,6 @@ const Map = ({
       return () => {
         isCancelled = true;
       };
-    } else {
-      setCenter({ lat: location.lat, lng: location.lng });
     }
   }, [selectedDistrict]);
 
@@ -156,21 +154,29 @@ const Map = ({
               goToCurrentLocation: () => {
                 const loc = locationRef.current;
                 if (loc && mapRef.current) {
-                  const moveLatLng = new window.kakao.maps.LatLng(loc.lat, loc.lng);
+                  const moveLatLng = new window.kakao.maps.LatLng(
+                    loc.lat,
+                    loc.lng,
+                  );
                   mapRef.current.panTo(moveLatLng);
                 }
               },
               searchInCurrentArea: () => {
-                var bounds = mapRef.current.getBounds()
-                var sw = bounds.getSouthWest()  // 영역정보의 남서쪽 정보
-                var ne = bounds.getNorthEast()  // 영역정보의 북동쪽 정보
-                console.log('남서쪽 위도, 경도 : ' + sw.toString() + '북동쪽 위도, 경도 : ' + ne.toString())
+                var bounds = mapRef.current.getBounds();
+                var sw = bounds.getSouthWest(); // 영역정보의 남서쪽 정보
+                var ne = bounds.getNorthEast(); // 영역정보의 북동쪽 정보
+                console.log(
+                  "남서쪽 위도, 경도 : " +
+                    sw.toString() +
+                    "북동쪽 위도, 경도 : " +
+                    ne.toString(),
+                );
 
                 return {
                   sw: { lat: sw.getLat(), lng: sw.getLng() },
                   ne: { lat: ne.getLat(), lng: ne.getLng() },
-                }
-              }
+                };
+              },
             });
           }}
         >
